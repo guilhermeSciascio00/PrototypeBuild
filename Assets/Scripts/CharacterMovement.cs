@@ -52,7 +52,7 @@ public class CharacterMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //Here we use hasJump==true, because when we press the spaceBar, hasJumped will be assigned to true, and in the the fixedUpdate check, if its true, the character will jump
+        //Here we use hasJump==true, because when we press the spaceBar, hasJumped will be assigned to true, and when the fixedUpdate check, if its true, the character will jump
         if (hasJumped && IsOnGround())
         {
             CharacterJump();
@@ -84,6 +84,7 @@ public class CharacterMovement : MonoBehaviour
 
     IEnumerator DoubleJumpPowerUp()
     {
+        //Test it with linearVelocityY instead of AddForce
         rb2D.gravityScale = 0f;
         rb2D.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         yield return new WaitForSeconds(0.2f);
