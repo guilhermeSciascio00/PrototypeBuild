@@ -1,7 +1,11 @@
+using System;
 using UnityEngine;
 
 public class Geyser : MonoBehaviour
 {
+
+    public static event Action OnGeyserEnter;
+    public static event Action OnGeyserExit;
 
     [Header("Limit and Starting Points")]
     [Tooltip("Maximum Geyzer height")]
@@ -21,8 +25,8 @@ public class Geyser : MonoBehaviour
     [SerializeField] float delayTime;
 
     //Geyzer Force Variables
-    const float GEYSER_FORCE = 1.4f;
-    const float FORCE_MULTIPLIER = 8f;
+    const float GEYSER_FORCE = .4f;
+    const float FORCE_MULTIPLIER = 18f;
 
     //Geyzer delay time and time to go up
     float lerpTime = 0f;
@@ -114,6 +118,7 @@ public class Geyser : MonoBehaviour
             rb2D = collision.GetComponent<Rigidbody2D>();
             isPlayerIn = true;
             isGeyserON = true;
+            OnGeyserEnter.Invoke();
         }
     }
 
@@ -122,6 +127,7 @@ public class Geyser : MonoBehaviour
         if (collision.GetComponent<CharacterMovement>() != null)
         {
             isPlayerIn = false;
+            OnGeyserExit.Invoke();
         }
     }
 
