@@ -1,11 +1,7 @@
-using NUnit.Framework.Constraints;
-using System.Collections;
 using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-
     InputSystem_Actions inputSystem;
 
     Vector2 movingDirection;
@@ -34,8 +30,8 @@ public class CharacterMovement : MonoBehaviour
         inputSystem.Player.Jump.Enable();
         inputSystem.Player.Jump.performed += Jump_performed;
 
-        Geyser.OnGeyserEnter += Geyser_OnGeyserEnter;
-        Geyser.OnGeyserExit += Geyser_OnGeyserExit;
+        GeyserV2.OnGeyserEnter += Geyser_OnGeyserEnter;
+        GeyserV2.OnGeyserExit += Geyser_OnGeyserExit;
 
         //DoubleJumpPW.OnDoubleJumpCollected += DoubleJumpPW_OnDoubleJumpCollected;
     }
@@ -68,13 +64,11 @@ public class CharacterMovement : MonoBehaviour
     private void Geyser_OnGeyserExit()
     {
         isOnGeyzer = false;
-        rb2D.gravityScale = gravityScaleForce;
     }
 
     private void Geyser_OnGeyserEnter()
     {
         isOnGeyzer = true;
-        rb2D.gravityScale = 0f;
     }
 
     private void Move_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)

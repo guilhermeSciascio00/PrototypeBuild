@@ -8,11 +8,12 @@ public class Geyser : MonoBehaviour
     public static event Action OnGeyserExit;
 
     [Header("Limit and Starting Points")]
-    [Tooltip("Maximum Geyzer height")]
-    [SerializeField] Transform desiredHeight;
+    [Tooltip("Maximum Geyzer height(ySize)")]
+    //[SerializeField] Transform desiredHeight;
+    [SerializeField] float yScale;
 
-    [Tooltip("GeyzerStartingPosition")]
-    [SerializeField] Transform geyserStartingPos;
+    [Tooltip("GeyzerStartingScale")]
+    [SerializeField] float geyserStartingScale = 1.5f;
 
     [Header("Geyzer Up/Down Speed")]
     [Tooltip("Speed to reach out the maximum height point")]
@@ -25,7 +26,7 @@ public class Geyser : MonoBehaviour
     [SerializeField] float delayTime;
 
     //Geyzer Force Variables
-    const float GEYSER_FORCE = .4f;
+    const float GEYSER_FORCE = .09f;
     const float FORCE_MULTIPLIER = 18f;
 
     //Geyzer delay time and time to go up
@@ -41,27 +42,56 @@ public class Geyser : MonoBehaviour
     bool isAtDesiredHeight = false;
 
     Rigidbody2D rb2D = null;
-    BoxCollider2D boxCollider2D = null;
+    //BoxCollider2D boxCollider2D = null;
 
     Vector2 startingPos = Vector2.zero;
 
     private void Start()
     {
-        GetGeyzerBoundsAndZone();
-        transform.position = geyserStartingPos.position;
-        startingPos = geyserStartingPos.position;
+        //GetGeyzerBoundsAndZone();
+        //transform.position = geyserStartingPos.position;
+        startingPos = transform.localScale;
         tempDelayTime = delayTime;
     }
 
     private void Update()
     {
-        GetGeyzerBoundsAndZone();
+        //GetGeyzerBoundsAndZone();
+        Debug.Log(startingPos);
+        CheckPlayer();
+        MoveGeyser();
+        //transform.position = Vector2.Lerp(startingPos, desiredHeight.position, lerpTime);
+    }
 
+    private void FixedUpdate()
+    {
+        //if(isPlayerIn && rb2D != null)
+        //{
+        //    //Happens when the player reaches the top of the geyzer
+        //    if(rb2D.position.y >= boxCollider2D.bounds.max.y)
+        //    {
+        //        rb2D.linearVelocityY -= GEYSER_FORCE;
+        //    }
+        //    //Happens if the player didn't go up yet
+        //    else if(rb2D.position.y <= boxCollider2D.bounds.max.y && rb2D.linearVelocityY >= 0)
+        //    {
+        //        rb2D.linearVelocityY += GEYSER_FORCE;
+        //    }
+        //    //Happens when the player is between the geyser top and the threshold zone
+        //    if (rb2D.linearVelocityY <= 0 && rb2D.position.y <= thresholdZone)
+        //    {
+        //        rb2D.linearVelocityY += GEYSER_FORCE * FORCE_MULTIPLIER;
+        //    }
+        //}
+    }
+
+    private void MoveGeyser()
+    {
         if (isGeyserON && !isAtDesiredHeight)
         {
             delayTime = tempDelayTime;
             lerpTime += Time.deltaTime * speedUP;
-            if(lerpTime >= 1f) 
+            if (lerpTime >= 1f)
             {
                 lerpTime = 1f;
                 isAtDesiredHeight = true;
@@ -76,7 +106,7 @@ public class Geyser : MonoBehaviour
                 {
                     lerpTime -= Time.deltaTime * speedDOWN;
                     delayTime = 0f;
-                    if(lerpTime <= 0f)
+                    if (lerpTime <= 0f)
                     {
                         lerpTime = 0f;
                         isAtDesiredHeight = false;
@@ -86,64 +116,76 @@ public class Geyser : MonoBehaviour
             }
         }
 
-        transform.position = Vector2.Lerp(startingPos, desiredHeight.position, lerpTime);
+        transform.localScale = Vector2.Lerp(startingPos, new Vector2(transform.localScale.x, yScale), lerpTime);
+
+
     }
 
-    private void FixedUpdate()
+    private void CheckPlayer()
     {
-        if(isPlayerIn && rb2D != null)
-        {
-            //Happens when the player reaches the top of the geyzer
-            if(rb2D.position.y >= boxCollider2D.bounds.max.y)
-            {
-                rb2D.linearVelocityY -= GEYSER_FORCE;
-            }
-            //Happens if the player didn't go up yet
-            else if(rb2D.position.y <= boxCollider2D.bounds.max.y && rb2D.linearVelocityY >= 0)
-            {
-                rb2D.linearVelocityY += GEYSER_FORCE;
-            }
-            //Happens when the player is between the geyser top and the threshold zone
-            if (rb2D.linearVelocityY <= 0 && rb2D.position.y <= thresholdZone)
-            {
-                rb2D.linearVelocityY += GEYSER_FORCE * FORCE_MULTIPLIER;
-            }
-        }
+        Collider2D hit = Physics2D.OverlapBox(transform.position, transform.lossyScale + new Vector3(0, geyserStartingScale, 0f), 0f, LayerMask.GetMask("Player"));
+
+        //if (hit)
+        //{
+        //    rb2D = hit?.GetComponent<Rigidbody2D>();
+        //    isPlayerIn = true;
+        //    isGeyserON = true;
+        //    ApplyGeyserForce();
+        //    OnGeyserEnter?.Invoke();
+        //}
+        //else
+        //{
+        //    isPlayerIn = false;
+        //    OnGeyserExit?.Invoke();
+        //}
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void ApplyGeyserForce()
     {
-        if (collision.CompareTag("Player"))
-        {
-            rb2D = collision.GetComponent<Rigidbody2D>();
-            isPlayerIn = true;
-            isGeyserON = true;
-            OnGeyserEnter.Invoke();
+        if (rb2D != null) 
+        { 
+            rb2D.linearVelocityY += GEYSER_FORCE; 
         }
+
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.GetComponent<CharacterMovement>() != null)
-        {
-            isPlayerIn = false;
-            OnGeyserExit.Invoke();
-        }
-    }
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
+    //    if (collision.CompareTag("Player"))
+    //    {
+    //        rb2D = collision.GetComponent<Rigidbody2D>();
+    //        isPlayerIn = true;
+    //        isGeyserON = true;
+    //        OnGeyserEnter.Invoke();
+    //    }
+    //}
+
+    //private void OnTriggerExit2D(Collider2D collision)
+    //{
+    //    if (collision.GetComponent<CharacterMovement>() != null)
+    //    {
+    //        isPlayerIn = false;
+    //        OnGeyserExit.Invoke();
+    //    }
+    //}
 
     private void GetGeyzerBoundsAndZone()
     {
-        if(this.gameObject.GetComponent<BoxCollider2D>() == null)
-        {
-            boxCollider2D = GetComponentInChildren<BoxCollider2D>();
-        }
-        else
-        {
-            boxCollider2D = GetComponent<BoxCollider2D>();
-        }
-        //Zone to re-apply the geyser force, when the player is falling down
-        thresholdZone = boxCollider2D.bounds.max.y - y_OffSet;
+        //if(this.gameObject.GetComponent<BoxCollider2D>() == null)
+        //{
+        //    boxCollider2D = GetComponentInChildren<BoxCollider2D>();
+        //}
+        //else
+        //{
+        //    boxCollider2D = GetComponent<BoxCollider2D>();
+        //}
+        ////Zone to re-apply the geyser force, when the player is falling down
+        //thresholdZone = boxCollider2D.bounds.max.y - y_OffSet;
     }
 
-   
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(this.transform.position, this.transform.lossyScale + new Vector3(0, geyserStartingScale, 0f));
+    }
 }
