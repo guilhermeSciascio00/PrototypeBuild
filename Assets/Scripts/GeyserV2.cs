@@ -7,15 +7,9 @@ public class GeyserV2 : MonoBehaviour
     public static event Action OnGeyserEnter;
     public static event Action OnGeyserExit;
 
-    //The starting and ending poisiton, is defined by two gameObjects
-    //Starting position of the geyser
-    [SerializeField] Transform startingPos;
-
-    //Ending position of the geyser
-    [SerializeField] Transform endingPos;
-
     //Getting the player Rigidbody;
-    [SerializeField] Rigidbody2D rb2d;
+    Rigidbody2D rb2d;
+    bool isRb2DNull = false;
 
     [SerializeField] LayerMask targetLayer;
 
@@ -28,35 +22,47 @@ public class GeyserV2 : MonoBehaviour
     Vector2 traceEndPos = Vector2.zero;
 
     //GeyserTimers
-    [SerializeField] float delayTime = 2f;
+    float delayTime = 2f; //Default value if you don't use SO
     float lerpTime = 0f;
-    float lerpSpeed = 2f;
     float tempDelayTime = 0f;
 
     //Geyser Checks
     bool isAtDesiredHeight = false;
     bool isGeyserOn = false;
+    bool isAutoGeyserOn = false;
     bool isPlayerIn = false;
     bool flewAboveIt = false;
     bool wasVelocityCancelled = false;
 
-    //Geyzer Force and Offset
-    [SerializeField, Range(.5f, 5f)] float geyzerUpwardsForce;
-    [SerializeField, Range(.2f, 5f)] float geyzerDownwadsForce;
+    //Geyzer Force Mult and Offset
     float forceMultiplier = 50f;
     float thresholdZoneOffset = 1.3f;
 
+    //ScriptableObject in action!!
+    [SerializeField] GeyserStatsSO geyserSO;
+
+    Vector2 startingPosV2;
+
     void Start()
     {
+        delayTime = geyserSO.geyserDelay;
         lineRenderer = GetComponent<LineRenderer>();
         tempDelayTime = delayTime;
+        startingPosV2 = lineRenderer.GetPosition(0);
         SetGeyserPos();
     }
 
     private void Update()
     {
         CheckForPlayer();
-        MoveGeyser();
+        if (geyserSO.needsThePlayer)
+        {
+            GeyserMoverWPlayer();
+        }
+        else
+        {
+            GeyserMoverAuto();
+        }
     }
 
     private void FixedUpdate()
@@ -70,39 +76,49 @@ public class GeyserV2 : MonoBehaviour
     private void SetGeyserPos()
     {
         //Setting the geyser position, using the line rendered at position 0 and 1
-        lineRenderer.SetPosition(0, startingPos.position);
-        lineRenderer.SetPosition(1, startingPos.position);
+        lineRenderer.SetPosition(0, startingPosV2);
+        lineRenderer.SetPosition(1, startingPosV2);
     }
 
     private void CheckForPlayer()
     {
         //Distance between the starting point, and the line renderer detachment until it reaches its final destination
-        float distanceV2 = Vector2.Distance(startingPos.position, traceEndPos);
+        float distanceV2 = Vector2.Distance(startingPosV2, traceEndPos);
 
         //BoxCast responsible for checking if the player is above it or not
-        RaycastHit2D hitV2 = Physics2D.BoxCast(startingPos.position, new Vector2(boxLenght, boxHeight), 0f, Vector2.up, distanceV2, targetLayer);
+        RaycastHit2D hitV2 = Physics2D.BoxCast(startingPosV2, new Vector2(boxLenght, boxHeight), 0f, Vector2.up, distanceV2, targetLayer);
 
-        if (hitV2)
+        if (geyserSO.needsThePlayer)
         {
-            isPlayerIn = true;
-            isGeyserOn = true;
-            OnGeyserEnter?.Invoke();
+            if (hitV2)
+            {
+                PlayerCollisionSequence(hitV2);
+            }
+            else
+            {
+                PlayerOffCollisionSequence();
+            }
         }
-        else
+        else if (!geyserSO.needsThePlayer || geyserSO.isItPermanent) 
         {
-            isPlayerIn = false;
-            wasVelocityCancelled = false;
-            OnGeyserExit?.Invoke();
+            if(isAutoGeyserOn && hitV2) 
+            {
+                PlayerCollisionSequence(hitV2);
+            }
+            else
+            {
+                PlayerOffCollisionSequence();
+            }
         }
     }
 
-    private void MoveGeyser()
+    private void GeyserMoverWPlayer()
     {
         //Method responsible for Moving the geyser between point A to B
         if(!isAtDesiredHeight && isGeyserOn) 
         {
             delayTime = tempDelayTime;
-            lerpTime += Time.deltaTime * lerpSpeed;
+            lerpTime += Time.deltaTime * geyserSO.geyserSpeedUP;
             if (lerpTime >= 1f)
             {
                 lerpTime = 1f;
@@ -115,7 +131,7 @@ public class GeyserV2 : MonoBehaviour
             if(delayTime <= 0f)
             {
                 delayTime = 0f;
-                lerpTime -= Time.deltaTime * lerpSpeed;
+                lerpTime -= Time.deltaTime * geyserSO.geyserSpeedDown;
                 if(lerpTime <= 0f)
                 {
                     lerpTime = 0f;
@@ -125,9 +141,57 @@ public class GeyserV2 : MonoBehaviour
             }
         }
 
-        traceEndPos = Vector2.Lerp(startingPos.position, endingPos.position, lerpTime);
+        traceEndPos = Vector2.Lerp(startingPosV2, GetGeyserFinalHeight(), lerpTime);
 
         //On this line, we use traceEndPos position, because it will lerp the Line Renderer at index 1 between the starting point to the end point
+        lineRenderer.SetPosition(1, traceEndPos);
+    }
+
+    private void GeyserMoverAuto()
+    {
+        if (!geyserSO.isItPermanent)
+        {
+            if (delayTime >= 0f)
+            {
+                delayTime -= Time.deltaTime;
+                if (delayTime <= 0)
+                {
+                    delayTime = 0f;
+                    if (!isAtDesiredHeight)
+                    {
+                        isAutoGeyserOn = true;
+                        lerpTime += Time.deltaTime * geyserSO.geyserSpeedUP;
+                        if (lerpTime >= 1f)
+                        {
+                            lerpTime = 1f;
+                            isAtDesiredHeight = true;
+                            delayTime = tempDelayTime;
+                        }
+                    }
+                    else
+                    {
+                        lerpTime -= Time.deltaTime *            geyserSO.geyserSpeedDown;
+                        if (lerpTime <= 0f)
+                        {
+                            lerpTime = 0f;
+                            isAtDesiredHeight = false;
+                            isAutoGeyserOn = false;
+                            delayTime = tempDelayTime;
+
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            lerpTime = 1f;
+            isAutoGeyserOn = true;
+            delayTime = 0f;
+        }
+
+        traceEndPos = Vector2.Lerp(startingPosV2, GetGeyserFinalHeight(), lerpTime);
+
         lineRenderer.SetPosition(1, traceEndPos);
     }
 
@@ -138,35 +202,61 @@ public class GeyserV2 : MonoBehaviour
         if(rb2d.linearVelocityY >= 0f && !wasVelocityCancelled)
         {
             wasVelocityCancelled = true;
-            rb2d.linearVelocityY = geyzerUpwardsForce;
+            rb2d.linearVelocityY = geyserSO.geyserUPForce;
         }
 
         //The distance between the top and the threshold
-        float thresholdZone = endingPos.position.y - thresholdZoneOffset;
+        float thresholdZone = GetGeyserFinalHeight().y - thresholdZoneOffset;
 
         if(rb2d != null)
         {
             //If the player isn't at the top, we apply positive force, if he flies above the geyser, we apply negative force. However, if he is between the thresholdzone and the top, we apply a positive force + a multiplier to "fight" with the down force
-            if(rb2d.position.y <= endingPos.position.y)
+            if(rb2d.position.y <= GetGeyserFinalHeight().y)
             {
-                rb2d.linearVelocityY += geyzerUpwardsForce;
+                rb2d.linearVelocityY += geyserSO.geyserUPForce;
                 flewAboveIt = false;
             }
             else
             {
                 flewAboveIt = true;
-                rb2d.linearVelocityY -= geyzerDownwadsForce;
+                rb2d.linearVelocityY -= geyserSO.geyserDownForce;
             }
-            if (rb2d.position.y <= endingPos.position.y && rb2d.position.y >= endingPos.position.y - thresholdZone)
+            if (rb2d.position.y <= GetGeyserFinalHeight().y && rb2d.position.y >= GetGeyserFinalHeight().y - thresholdZone)
             {
                 if (flewAboveIt)
                 {
-                    rb2d.linearVelocityY += geyzerUpwardsForce * forceMultiplier;
+                    rb2d.linearVelocityY += geyserSO.geyserUPForce * forceMultiplier;
                 }
                 
             }
         }
         
+    }
+
+    private void PlayerCollisionSequence(RaycastHit2D hitV2)
+    {
+        rb2d = hitV2.rigidbody;
+        isRb2DNull = false;
+        isPlayerIn = true;
+        isGeyserOn = true;
+        OnGeyserEnter?.Invoke();
+    }
+
+    private void PlayerOffCollisionSequence()
+    {
+        if (!isRb2DNull)
+        {
+            rb2d = null;
+            isRb2DNull = true;
+        }
+        isPlayerIn = false;
+        wasVelocityCancelled = false;
+        OnGeyserExit?.Invoke();
+    }
+
+    private Vector2 GetGeyserFinalHeight()
+    {
+        return new Vector2(startingPosV2.x, startingPosV2.y + geyserSO.geyserHeight);
     }
 
     private void OnDrawGizmos()
@@ -175,13 +265,14 @@ public class GeyserV2 : MonoBehaviour
 
         Gizmos.color = isPlayerIn ? Color.green : Color.red;
         lineRenderer = GetComponent<LineRenderer>();
+        startingPosV2 = lineRenderer.GetPosition(0);
 
         Vector2 boxTotalSize = new Vector2(boxLenght, boxHeight);
-        float totalDistance = Vector2.Distance(startingPos.position, endingPos.position);
+        float totalDistance = Vector2.Distance(startingPosV2, GetGeyserFinalHeight());
 
-        Gizmos.DrawWireCube(endingPos.position, boxTotalSize);
-        Gizmos.DrawWireCube(startingPos.position, boxTotalSize);
-        Gizmos.DrawRay(startingPos.position, Vector2.up + new Vector2(0f, totalDistance));
+        Gizmos.DrawWireCube(GetGeyserFinalHeight(), boxTotalSize);
+        Gizmos.DrawWireCube(startingPosV2, boxTotalSize);
+        Gizmos.DrawRay(startingPosV2, Vector2.up + new Vector2(0f, totalDistance));
 
     }
 }
