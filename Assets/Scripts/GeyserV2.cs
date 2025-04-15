@@ -139,7 +139,7 @@ public class GeyserV2 : MonoBehaviour
     {
         if (_isPlayerIn)
         {
-            //To apply the geyser force, we first cancel any inconming force(jump,etc) before doing so
+            //To apply the geyser force, we first cancel any incoming force(jump,etc) before doing so
 
             if (_rb2d.linearVelocityY >= 0f && !_wasVelocityCancelled)
             {
