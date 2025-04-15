@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   geyserSpeedUP: 3
   geyserSpeedDown: 2
-  geyserDelay: 3
+  geyserDelay: 2
   geyserHeight: 6.21
   geyserUPForce: 1.8
   geyserDownForce: 2
-  needsThePlayer: 1
+  needsThePlayer: 0
   isItPermanent: 0

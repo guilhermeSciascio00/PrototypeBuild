@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1cd812024def68409abdf9dbbe6ab45, type: 3}
   m_Name: Permanent_StrongerGeyser
   m_EditorClassIdentifier: 
-  geyserSpeedUP: 0
-  geyserSpeedDown: 0
+  geyserSpeedUP: 2
+  geyserSpeedDown: 2
   geyserDelay: 0
+  geyserHeight: 7
   geyserUPForce: 3
   geyserDownForce: 8
   needsThePlayer: 0
