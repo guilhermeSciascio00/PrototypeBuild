@@ -214,7 +214,7 @@ public class GeyserV2 : MonoBehaviour
     }
 
     /// <summary>
-    /// Method responsible to move the geyser up and down as needed;
+    /// Method responsible for moving the geyser up and down as needed;
     /// </summary>
     private void GeyserMover()
     {
