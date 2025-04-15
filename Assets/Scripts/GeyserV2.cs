@@ -231,7 +231,8 @@ public class GeyserV2 : MonoBehaviour
                 if (_delayTime <= DEFAULT_TIMER_V)
                 {
                     _delayTime = DEFAULT_TIMER_V;
-                    _isAutoGeyserOn = true;
+                    if (!geyserSO.needsThePlayer) { _isAutoGeyserOn = true; }
+
                     _lerpTime += Time.deltaTime * geyserSO.geyserSpeedUP;
                     if(_lerpTime >= MAX_TIMER_V)
                     {
