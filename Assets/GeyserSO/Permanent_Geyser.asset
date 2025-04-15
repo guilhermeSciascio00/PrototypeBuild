@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d1cd812024def68409abdf9dbbe6ab45, type: 3}
-  m_Name: SlowGeyser
+  m_Name: Permanent_Geyser
   m_EditorClassIdentifier: 
-  geyserSpeedUP: 0.8
-  geyserSpeedDown: 0.8
-  geyserDelay: 3
-  geyserHeight: 5.94
-  geyserUPForce: 1.5
-  geyserDownForce: 1
-  needsThePlayer: 1
-  isItPermanent: 0
+  geyserSpeedUP: 2
+  geyserSpeedDown: 2
+  geyserDelay: 0
+  geyserHeight: 6.2
+  geyserUPForce: 3
+  geyserDownForce: 4
+  needsThePlayer: 0
+  isItPermanent: 1

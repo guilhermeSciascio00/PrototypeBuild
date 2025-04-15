@@ -74,7 +74,7 @@ public class GeyserV2 : MonoBehaviour
         }
 
         _lineRenderer = GetComponent<LineRenderer>();
-        _startingPos = _lineRenderer.GetPosition(0);
+        _startingPos = transform.position;
 
         //Setting the geyser position, using the line rendered at position 0 and 1
 
