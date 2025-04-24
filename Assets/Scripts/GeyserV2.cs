@@ -36,6 +36,7 @@ public class GeyserV2 : MonoBehaviour
     private bool _isPlayerIn = false;
     private bool _flewAboveIt = false;
     private bool _wasVelocityCancelled = false;
+    private bool _isBlockedByBox = false;
 
     //Geyzer Force Mult and Offset
     private float _forceMultiplier = 50f;
@@ -45,6 +46,7 @@ public class GeyserV2 : MonoBehaviour
     [SerializeField] GeyserStatsSO geyserSO;
 
     private Vector2 _startingPos;
+    [SerializeField] Vector3 offset;
 
     void Start()
     {
@@ -53,6 +55,7 @@ public class GeyserV2 : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log($"Is blocked by the box? {_isBlockedByBox}");
         CheckForPlayer();
         GeyserStartV2(geyserSO.isItPermanent);
     }
@@ -74,8 +77,14 @@ public class GeyserV2 : MonoBehaviour
         }
 
         _lineRenderer = GetComponent<LineRenderer>();
-        _startingPos = transform.position;
 
+        if(!_lineRenderer.enabled)
+        {
+            _lineRenderer.enabled = true;
+        }
+
+        //offset = new Vector2(0, geyserSO.geyserHeight / 2);
+        _startingPos = transform.position;
         //Setting the geyser position, using the line rendered at position 0 and 1
 
         _lineRenderer.SetPosition(0, _startingPos);
@@ -84,40 +93,90 @@ public class GeyserV2 : MonoBehaviour
 
     private void CheckForPlayer()
     {
-        //Distance between the starting point, and the line renderer detachment until it reaches its final destination
-        float distanceV2 = Vector2.Distance(_startingPos, _traceEndPos);
-
+        
         //BoxCast responsible for checking if the player is above it or not
-        RaycastHit2D hitV2 = Physics2D.BoxCast(_startingPos, new Vector2(boxLenght, boxHeight), 0f, Vector2.up, distanceV2, targetLayer);
+        //RaycastHit2D hitV2 = Physics2D.BoxCast(_startingPos + Vector2.down * 0.5f, new Vector2(boxLenght, boxHeight), 0f, Vector2.up, geyserSO.geyserHeight, targetLayer);
 
-        if (geyserSO.needsThePlayer)
+
+        Collider2D hit = Physics2D.OverlapBox(transform.position + offset, new Vector2(boxLenght, geyserSO.geyserHeight), 0f, LayerMask.GetMask("Player", "Objects"));
+
+        //Debug.Log($"Is PlayerIN {_isPlayerIn}");
+        //Debug.Log($"Is RB2D Null {_isRb2DNull}");
+        //Debug.Log($"Is GeyserON {_isGeyserOn}");
+
+        if (hit)
         {
-            if (hitV2)
+            if (hit.gameObject.CompareTag("Player"))
             {
-                PlayerCollisionSequence(hitV2, true);
+                _isPlayerIn = true;
+                _rb2d = hit.GetComponent<Rigidbody2D>();
+                _isRb2DNull = false;
+                //OnGeyserEnter.Invoke();
+                Debug.Log(hit.gameObject.name);
             }
-            else
+            else if (hit.gameObject.CompareTag("Objects"))
             {
-                PlayerCollisionSequence(hitV2, false);
+                Debug.Log(hit.gameObject.name);
+                _isBlockedByBox = true;
             }
+            //else
+            //{
+            //    _isPlayerIn = false;
+            //    _rb2d = null;
+            //    _isRb2DNull = true;
+            //    //    _wasVelocityCancelled = false;
+            //    //    OnGeyserExit.Invoke();
+            //}
         }
-        else if (!geyserSO.needsThePlayer || geyserSO.isItPermanent) 
+        else
         {
-            if(_isAutoGeyserOn && hitV2) 
-            {
-                PlayerCollisionSequence(hitV2, true);
-            }
-            else
-            {
-                PlayerCollisionSequence(hitV2, false);
-            }
+            _isPlayerIn = false;
+            _rb2d = null;
+            _isRb2DNull = true;
+            _isBlockedByBox = false;
         }
+
+        //if (geyserSO.needsThePlayer)
+        //{
+        //    if (hitV2)
+        //    {
+        //        PlayerCollisionSequence(hitV2, true);
+        //    }
+        //    else
+        //    {
+        //        PlayerCollisionSequence(hitV2, false);
+        //    }
+        //}
+        //else if (!geyserSO.needsThePlayer || geyserSO.isItPermanent) 
+        //{
+        //    if(_isAutoGeyserOn && hitV2) 
+        //    {
+        //        PlayerCollisionSequence(hitV2, true);
+        //    }
+        //    else
+        //    {
+        //        PlayerCollisionSequence(hitV2, false);
+        //    }
+        //}
     }
 
     private void GeyserStartV2(bool isItPermanent)
     {
-        if(!isItPermanent)
+        if (_isPlayerIn)
         {
+            _isGeyserOn = true;
+        }
+        if (!isItPermanent)
+        {
+            if (_isBlockedByBox)
+            {
+                TurnOffGeyser();
+            }
+            else if(!_isBlockedByBox && !geyserSO.needsThePlayer)
+            {
+                 _isAutoGeyserOn = true;
+                _isGeyserOn = true;
+            }
             if (_isGeyserOn)
             {
                 GeyserMover();
@@ -125,9 +184,16 @@ public class GeyserV2 : MonoBehaviour
         }
         else
         {
-            _lerpTime = MAX_TIMER_V;
-            _isAutoGeyserOn = true;
-            _delayTime = DEFAULT_TIMER_V;
+            if (_isBlockedByBox)
+            {
+                TurnOffGeyser();
+            }
+            else
+            {
+                _lerpTime = MAX_TIMER_V;
+                _isAutoGeyserOn = true;
+                _delayTime = DEFAULT_TIMER_V;
+            }
         }
 
         _traceEndPos = Vector2.Lerp(_startingPos, GetGeyserFinalHeight(), _lerpTime);
@@ -137,7 +203,7 @@ public class GeyserV2 : MonoBehaviour
 
     private void ApplyGeyserForce()
     {
-        if (_isPlayerIn)
+        if (_isPlayerIn && !_isBlockedByBox && _rb2d.position.y < _traceEndPos.y)
         {
             //To apply the geyser force, we first cancel any incoming force(jump,etc) before doing so
 
@@ -182,35 +248,47 @@ public class GeyserV2 : MonoBehaviour
     /// </summary>
     /// <param name="hitV2"></param>
     /// <param name="isOnCollision"></param>
-    private void PlayerCollisionSequence(RaycastHit2D hitV2, bool isOnCollision)
-    {
-        switch (isOnCollision)
-        {
-            case true:
-                _rb2d = hitV2.rigidbody;
-                _isRb2DNull = false;
-                _isPlayerIn = true;
-                if (!_isGeyserOn) { _isGeyserOn = true; }
-                OnGeyserEnter?.Invoke();
-                break;
+    //private void PlayerCollisionSequence(RaycastHit2D hitV2, bool isOnCollision)
+    //{
+    //    switch (isOnCollision)
+    //    {
+    //        case true:
+    //            _rb2d = hitV2.rigidbody;
+    //            _isRb2DNull = false;
+    //            _isPlayerIn = true;
+    //            if (!_isGeyserOn) { _isGeyserOn = true; }
+    //            OnGeyserEnter?.Invoke();
+    //            break;
 
-            case false:
-                if (!_isRb2DNull)
-                {
-                    _rb2d = null;
-                    _isRb2DNull = true;
-                }
-                _isPlayerIn = false;
-                _wasVelocityCancelled = false;
-                OnGeyserExit?.Invoke();
-                break;
-        }
+    //        case false:
+    //            if (!_isRb2DNull)
+    //            {
+    //                _rb2d = null;
+    //                _isRb2DNull = true;
+    //            }
+    //            _isPlayerIn = false;
+    //            _wasVelocityCancelled = false;
+    //            OnGeyserExit?.Invoke();
+    //            break;
+    //    }
         
-    }
+    //}
 
     private Vector2 GetGeyserFinalHeight()
     {
         return new Vector2(_startingPos.x, _startingPos.y + geyserSO.geyserHeight);
+    }
+
+    private void TurnOffGeyser()
+    {
+        if (_isBlockedByBox)
+        {
+            _isGeyserOn = false;
+            _isAutoGeyserOn = false;
+            _lerpTime = DEFAULT_TIMER_V;
+            _delayTime = _tempDelayTime;
+            _isAtDesiredHeight = false;
+        }
     }
 
     /// <summary>
@@ -218,6 +296,11 @@ public class GeyserV2 : MonoBehaviour
     /// </summary>
     private void GeyserMover()
     {
+        if (_isBlockedByBox)
+        {
+            TurnOffGeyser();
+        }
+
         if (!_isAtDesiredHeight)
         {
             if (geyserSO.needsThePlayer)
@@ -268,15 +351,20 @@ public class GeyserV2 : MonoBehaviour
         //Visual Debugger Helpers
 
         Gizmos.color = _isPlayerIn ? Color.green : Color.red;
-        _lineRenderer = GetComponent<LineRenderer>();
-        _startingPos = _lineRenderer.GetPosition(0);
+        Gizmos.matrix = transform.localToWorldMatrix;
 
-        Vector2 boxTotalSize = new Vector2(boxLenght, boxHeight);
-        float totalDistance = Vector2.Distance(_startingPos, GetGeyserFinalHeight());
+        //_lineRenderer = GetComponent<LineRenderer>();
 
-        Gizmos.DrawWireCube(GetGeyserFinalHeight(), boxTotalSize);
-        Gizmos.DrawWireCube(_startingPos, boxTotalSize);
-        Gizmos.DrawRay(_startingPos, Vector2.up + new Vector2(0f, totalDistance));
+        //_startingPos = transform.position;
+
+        //Vector2 boxTotalSize = new Vector2(boxLenght, boxHeight);
+        //float totalDistance = Vector2.Distance(_startingPos, GetGeyserFinalHeight());
+
+        //Gizmos.DrawWireCube(new Vector2(0, geyserSO.geyserHeight), boxTotalSize);
+        Gizmos.DrawWireCube(Vector3.zero + offset, new Vector2(boxLenght, geyserSO.geyserHeight));
+
+
+        //Gizmos.DrawRay(Vector2.zero, Vector2.up + new Vector2(0f, totalDistance));
 
     }
 }

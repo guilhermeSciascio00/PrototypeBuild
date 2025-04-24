@@ -1,3 +1,5 @@
+using System.Data.Common;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
@@ -13,6 +15,8 @@ public class CharacterMovement : MonoBehaviour
     bool hasJumped = false;
     bool isOnGeyzer = false;
     //bool hasDoubleJump = false;
+
+    RaycastHit2D hit;
 
     void Awake()
     {
@@ -52,7 +56,7 @@ public class CharacterMovement : MonoBehaviour
     private void FixedUpdate()
     {
         //Here we use hasJump==true, because when we press the spaceBar, hasJumped will be assigned to true, and when the fixedUpdate check, if its true, the character will jump
-        if (hasJumped && IsOnGround() )
+        if (hasJumped && IsOnJumpableSurface() )
         {
             CharacterJump();
         }
@@ -110,18 +114,50 @@ public class CharacterMovement : MonoBehaviour
     }
     
 
-    private bool IsOnGround()
+    private bool IsOnJumpableSurface()
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.5f, LayerMask.GetMask("Ground"));
+        hit = Physics2D.Raycast(transform.position, Vector2.down, 1f, LayerMask.GetMask("Ground", "Objects"));
+
+        //RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 1f);
+
+        //if (hit)
+        //{
+        //    foreach (RaycastHit2D rayHits in hits)
+        //    {
+        //        Debug.Log(rayHits.collider.tag);
+        //    }
+        //    return true;
+        //}
+        //return false;
 
         if (hit)
         {
-            Debug.Log($"We're hitting the {hit.collider.name}");
-            return true;
+            Debug.Log("Am I working?");
+            //Debug.Log(hit.point);
+            Debug.Log(hit.collider.tag);
+            if (!hit.collider.CompareTag("Player"))
+            {
+                Debug.Log(hit.collider.tag);
+                return true;
+            }
         }
-        else
-        {
-            return false;
-        }
+        return false;
+        //if (hit)
+        //{
+        //    Debug.Log($"We're hitting the {hit.collider.name} and it holds the tag {hit.collider.tag}");
+        //    return true;
+        //}
+        //else
+        //{
+        //    return false;
+        //}
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+
+        Gizmos.DrawRay(transform.position, Vector2.down);
+        Gizmos.DrawRay(transform.position, hit.point);
     }
 }
