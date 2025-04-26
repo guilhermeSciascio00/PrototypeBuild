@@ -42,11 +42,12 @@ public class CharacterMovement : MonoBehaviour
 
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        //Here we start the jump process
-        hasJumped = true;
+        if (IsOnJumpableSurface())
+        {
+            //Here we start the jump process
+            hasJumped = true;
+        }
     }
-
-
     //private void DoubleJumpPW_OnDoubleJumpCollected()
     //{
     //    hasDoubleJump = true;
@@ -56,11 +57,8 @@ public class CharacterMovement : MonoBehaviour
     private void FixedUpdate()
     {
         //Here we use hasJump==true, because when we press the spaceBar, hasJumped will be assigned to true, and when the fixedUpdate check, if its true, the character will jump
-        if (hasJumped && IsOnJumpableSurface() )
-        {
-            CharacterJump();
-        }
 
+        CharacterJump();
         MoveCharacter();
         
     }
@@ -82,7 +80,7 @@ public class CharacterMovement : MonoBehaviour
 
     private void CharacterJump()
     {
-        if(!isOnGeyzer)
+        if(!isOnGeyzer && hasJumped)
         {
             rb2D.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             hasJumped = false;
@@ -116,7 +114,7 @@ public class CharacterMovement : MonoBehaviour
 
     private bool IsOnJumpableSurface()
     {
-        hit = Physics2D.Raycast(transform.position, Vector2.down, 1f, LayerMask.GetMask("Ground", "Objects"));
+        hit = Physics2D.Raycast(transform.position, Vector2.down, .5f, LayerMask.GetMask("Ground", "Objects"));
 
         //RaycastHit2D[] hits = Physics2D.RaycastAll(transform.position, Vector2.down, 1f);
 
@@ -132,12 +130,8 @@ public class CharacterMovement : MonoBehaviour
 
         if (hit)
         {
-            Debug.Log("Am I working?");
-            //Debug.Log(hit.point);
-            Debug.Log(hit.collider.tag);
             if (!hit.collider.CompareTag("Player"))
             {
-                Debug.Log(hit.collider.tag);
                 return true;
             }
         }
@@ -157,7 +151,7 @@ public class CharacterMovement : MonoBehaviour
     {
         Gizmos.color = Color.blue;
 
-        Gizmos.DrawRay(transform.position, Vector2.down);
+        Gizmos.DrawRay(transform.position, new Vector2(0f, -0.5f));
         Gizmos.DrawRay(transform.position, hit.point);
     }
 }

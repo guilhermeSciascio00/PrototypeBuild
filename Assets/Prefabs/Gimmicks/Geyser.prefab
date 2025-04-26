@@ -158,4 +158,4 @@ MonoBehaviour:
   boxHeight: 1.86
   boxLenght: 0.95
   geyserSO: {fileID: 11400000, guid: 6d9ebd4390eba4148980a6e85f8e12eb, type: 2}
-  offset: {x: 0, y: 4.37, z: 0}
+  offset: {x: 0, y: 3.23, z: 0}
