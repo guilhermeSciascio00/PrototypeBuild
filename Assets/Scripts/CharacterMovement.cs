@@ -7,18 +7,18 @@ public class CharacterMovement : MonoBehaviour
     Vector2 movingDirection;
     float speedFactor = 7f;
     float jumpForce = 18f;
-    float gravityScaleForce;
 
     Rigidbody2D rb2D;
     bool hasJumped = false;
     bool isOnGeyzer = false;
-    //bool hasDoubleJump = false;
+
+    RaycastHit2D hit;
 
     void Awake()
     {
         inputSystem = new InputSystem_Actions();
         rb2D = GetComponent<Rigidbody2D>();
-        gravityScaleForce = rb2D.gravityScale;
+       
     }
 
 
@@ -33,32 +33,22 @@ public class CharacterMovement : MonoBehaviour
         GeyserV2.OnGeyserEnter += Geyser_OnGeyserEnter;
         GeyserV2.OnGeyserExit += Geyser_OnGeyserExit;
 
-        //DoubleJumpPW.OnDoubleJumpCollected += DoubleJumpPW_OnDoubleJumpCollected;
     }
 
     private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        //Here we start the jump process
-        hasJumped = true;
+        if (IsOnJumpableSurface())
+        {
+            //Here we start the jump process
+            hasJumped = true;
+        }
     }
-
-
-    //private void DoubleJumpPW_OnDoubleJumpCollected()
-    //{
-    //    hasDoubleJump = true;
-    //}
 
 
     private void FixedUpdate()
     {
-        //Here we use hasJump==true, because when we press the spaceBar, hasJumped will be assigned to true, and when the fixedUpdate check, if its true, the character will jump
-        if (hasJumped && IsOnGround() )
-        {
-            CharacterJump();
-        }
-
+        CharacterJump();
         MoveCharacter();
-        
     }
 
     private void Geyser_OnGeyserExit()
@@ -78,31 +68,12 @@ public class CharacterMovement : MonoBehaviour
 
     private void CharacterJump()
     {
-        if(!isOnGeyzer)
+        if(!isOnGeyzer && hasJumped)
         {
             rb2D.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             hasJumped = false;
         }
     }
-
-    //private void CharacterDoubleJump()
-    //{
-    //    if (hasDoubleJump)
-    //    {
-    //        StartCoroutine(DoubleJumpPowerUp());
-    //    }
-    //}
-
-    //IEnumerator DoubleJumpPowerUp()
-    //{
-    //    //Test it with linearVelocityY instead of AddForce
-    //    rb2D.gravityScale = 0f;
-    //    rb2D.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-    //    yield return new WaitForSeconds(0.2f);
-    //    hasDoubleJump = false;
-    //    hasJumped = false;
-    //    rb2D.gravityScale = gravityScaleForce;
-    //}
 
     private void MoveCharacter()
     {
@@ -110,18 +81,25 @@ public class CharacterMovement : MonoBehaviour
     }
     
 
-    private bool IsOnGround()
+    private bool IsOnJumpableSurface()
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.5f, LayerMask.GetMask("Ground"));
+        hit = Physics2D.Raycast(transform.position, Vector2.down, .5f, LayerMask.GetMask("Ground", "Objects"));
 
         if (hit)
         {
-            Debug.Log($"We're hitting the {hit.collider.name}");
-            return true;
+            if (!hit.collider.CompareTag("Player") && !isOnGeyzer)
+            {
+                return true;
+            }
         }
-        else
-        {
-            return false;
-        }
+        return false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+
+        Gizmos.DrawRay(transform.position, new Vector2(0f, -0.5f));
+        Gizmos.DrawRay(transform.position, hit.point);
     }
 }
