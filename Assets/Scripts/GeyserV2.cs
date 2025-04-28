@@ -15,8 +15,8 @@ public class GeyserV2 : MonoBehaviour
     private bool _isRb2DNull = false;
 
     //GeyserBoxCastSize
-    [SerializeField] float boxHeight = 4f;
-    [SerializeField] float boxLenght = 1f;
+    [SerializeField] float boxLenghtPlayer = 1f;
+    [SerializeField] float boxLenghtObjects = 1f;
     
     //LineRenderer Properties
     private LineRenderer _lineRenderer;
@@ -40,15 +40,19 @@ public class GeyserV2 : MonoBehaviour
     private bool _flewAboveIt = false;
     private bool _wasVelocityCancelled = false;
 
-    //Geyzer Force Mult and Offset
-    private float _forceMultiplier = 50f;
-    private float _thresholdZoneOffset = 1.3f;
-
     //ScriptableObject in action!!
     [SerializeField] GeyserStatsSO geyserSO;
 
     private Vector2 _startingPos;
-    [SerializeField] Vector3 offset;
+
+    //Geyzer Force Mult and Offset
+    private float _forceMultiplier = 50f;
+    private float _thresholdZoneOffset = 1.3f;
+
+    [SerializeField] Vector3 playerDetectionOffset;
+    [SerializeField] Vector3 boxDetectionOffset;
+    [SerializeField] private float _insideGeyserXOffset = 0.5f;
+    private Vector3 _geyserInsideOffset;
 
     Rigidbody2D playerReference;
 
@@ -77,7 +81,6 @@ public class GeyserV2 : MonoBehaviour
         SetGeyserDLTimer();
 
         // *.5f is usually faster than / 2
-        offset = new Vector2(0f, geyserSO.geyserHeight * .5f);
         _lineRenderer = GetComponent<LineRenderer>();
 
         if (!_lineRenderer.enabled)
@@ -93,6 +96,7 @@ public class GeyserV2 : MonoBehaviour
 
     private void SetGeyserBottomPosition()
     {
+        playerDetectionOffset = new Vector2(0f, geyserSO.geyserHeightPlayer * .5f);
         _startingPos = transform.position;
         _lineRenderer.SetPosition(0, _startingPos);
     }
@@ -109,11 +113,12 @@ public class GeyserV2 : MonoBehaviour
     private void CheckForOverLaps()
     {
         //The position that the overlap box will do the check
-        Vector3 checkPosition = transform.position + offset;
+        Vector3 checkPositionPlayer = transform.position + playerDetectionOffset;
+        Vector3 checkPositionBox = transform.position + GetGeyserInsideDetectionOffset();
 
-        Collider2D playerOverlap = Physics2D.OverlapBox(checkPosition, new Vector2(boxLenght, geyserSO.geyserHeight), 0f, LayerMask.GetMask("Player"));
+        Collider2D playerOverlap = Physics2D.OverlapBox(checkPositionPlayer, new Vector2(boxLenghtPlayer, geyserSO.geyserHeightPlayer), 0f, LayerMask.GetMask("Player"));
 
-        Collider2D boxOverlap = Physics2D.OverlapBox(checkPosition, new Vector2(boxLenght, geyserSO.geyserHeight), 0f, LayerMask.GetMask("Objects"));
+        Collider2D boxOverlap = Physics2D.OverlapBox(checkPositionBox, new Vector2(boxLenghtObjects, geyserSO.geyserHeightBox), 0f, LayerMask.GetMask("Objects"));
 
         _isPlayerIn = playerOverlap;
 
@@ -262,9 +267,14 @@ public class GeyserV2 : MonoBehaviour
 
     }
 
+    private Vector3 GetGeyserInsideDetectionOffset()
+    {
+        return new Vector3(transform.position.x > 0f ? +_insideGeyserXOffset : -_insideGeyserXOffset, boxDetectionOffset.y, 0f);
+    }
+
     private Vector2 GetGeyserFinalHeight()
     {
-        return new Vector2(_startingPos.x, _startingPos.y + geyserSO.geyserHeight);
+        return new Vector2(_startingPos.x, _startingPos.y + geyserSO.geyserHeightPlayer);
     }
 
     private void TurnOffGeyser()
@@ -347,17 +357,25 @@ public class GeyserV2 : MonoBehaviour
         {
             Gizmos.color = Color.green;
         }
-        else if(_isObjectIn)
-        {
-            Gizmos.color = Color.blue;
-        }
         else if(!(_isPlayerIn && _isObjectIn))
         {
             Gizmos.color = Color.red;
         }
 
+        //GeyserCheck(Player)
+        Gizmos.DrawWireCube(Vector3.zero + playerDetectionOffset, new Vector2(boxLenghtPlayer, geyserSO.geyserHeightPlayer));
 
-        Gizmos.DrawWireCube(Vector3.zero + offset, new Vector2(boxLenght, geyserSO.geyserHeight));
+        if (_isObjectIn)
+        {
+            Gizmos.color = Color.blue;
+        }
+        else
+        {
+            Gizmos.color = Color.yellow;
+        }
 
+        //GeyserCheck(Box)
+        Vector3 insideOffset = new Vector3(0f + (transform.position.x > 0f ? +_insideGeyserXOffset : -_insideGeyserXOffset),boxDetectionOffset.y,0f);
+        Gizmos.DrawWireCube(insideOffset, new Vector2(boxLenghtObjects, geyserSO.geyserHeightBox));
     }
 }

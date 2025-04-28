@@ -152,10 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d16438e51ad93d4e8a4b9248fef918a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  boxHeight: 1.86
-  boxLenght: 0.95
+  boxLenghtPlayer: 1
+  boxLenghtObjects: 0.2
   geyserSO: {fileID: 11400000, guid: 6d9ebd4390eba4148980a6e85f8e12eb, type: 2}
-  offset: {x: 0, y: 3.23, z: 0}
+  playerDetectionOffset: {x: 0, y: 3.2, z: 0}
+  boxDetectionOffset: {x: 0, y: 0.7, z: 0}
+  _insideGeyserXOffset: 0.6
