@@ -4,13 +4,12 @@ public class CharacterMovement : MonoBehaviour
 {
     InputSystem_Actions inputSystem;
 
-    Vector2 movingDirection;
-    float speedFactor = 7f;
-    float jumpForce = 18f;
+    Vector2 _movingDirection;
+    float _speedFactor = 7f;
+    float _jumpForce = 18f;
 
     Rigidbody2D rb2D;
-    bool hasJumped = false;
-    bool isOnGeyzer = false;
+    bool _hasJumped = false;
 
     RaycastHit2D hit;
 
@@ -30,19 +29,9 @@ public class CharacterMovement : MonoBehaviour
         inputSystem.Player.Jump.Enable();
         inputSystem.Player.Jump.performed += Jump_performed;
 
-        GeyserV2.OnGeyserEnter += Geyser_OnGeyserEnter;
-        GeyserV2.OnGeyserExit += Geyser_OnGeyserExit;
-
     }
 
-    private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        if (IsOnJumpableSurface())
-        {
-            //Here we start the jump process
-            hasJumped = true;
-        }
-    }
+
 
 
     private void FixedUpdate()
@@ -51,33 +40,33 @@ public class CharacterMovement : MonoBehaviour
         MoveCharacter();
     }
 
-    private void Geyser_OnGeyserExit()
+    private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        isOnGeyzer = false;
+        if (IsOnJumpableSurface())
+        {
+            //Here we start the jump process
+            _hasJumped = true;
+        }
     }
 
-    private void Geyser_OnGeyserEnter()
-    {
-        isOnGeyzer = true;
-    }
 
     private void Move_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
     {
-        movingDirection = obj.ReadValue<Vector2>();
+        _movingDirection = obj.ReadValue<Vector2>();
     }
 
     private void CharacterJump()
     {
-        if(!isOnGeyzer && hasJumped)
+        if(_hasJumped)
         {
-            rb2D.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            hasJumped = false;
+            rb2D.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
+            _hasJumped = false;
         }
     }
 
     private void MoveCharacter()
     {
-        rb2D.linearVelocity = new Vector2(movingDirection.x * speedFactor, rb2D.linearVelocity.y);
+        rb2D.linearVelocity = new Vector2(_movingDirection.x * _speedFactor, rb2D.linearVelocity.y);
     }
     
 
@@ -87,7 +76,7 @@ public class CharacterMovement : MonoBehaviour
 
         if (hit)
         {
-            if (!hit.collider.CompareTag("Player") && !isOnGeyzer)
+            if (!hit.collider.CompareTag("Player"))
             {
                 return true;
             }

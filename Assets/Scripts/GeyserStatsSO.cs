@@ -8,7 +8,6 @@ public class GeyserStatsSO : ScriptableObject
     public float geyserSpeedDown;
     public float geyserDelay;
     public float geyserHeightPlayer;
-    public float geyserHeightBox;
 
     public float geyserUPForce; 
     public float geyserDownForce; 

@@ -153,8 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boxLenghtPlayer: 1
-  boxLenghtObjects: 0.2
+  boxLenghtObjects: 1.04
   geyserSO: {fileID: 11400000, guid: 6d9ebd4390eba4148980a6e85f8e12eb, type: 2}
-  playerDetectionOffset: {x: 0, y: 3.2, z: 0}
-  boxDetectionOffset: {x: 0, y: 0.7, z: 0}
-  _insideGeyserXOffset: 0.6
+  playerDetectionOffset: {x: 0, y: 3, z: 0}
+  _boxOffset: {x: 0.66, y: 0.49}

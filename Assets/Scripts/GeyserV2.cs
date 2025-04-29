@@ -5,11 +5,6 @@ public class GeyserV2 : MonoBehaviour
 {
     //TODO: Arrange the variables by functionality
 
-
-    //We use these events to prevent the player to jump when it is inside the geyser
-    public static event Action OnGeyserEnter;
-    public static event Action OnGeyserExit;
-
     //Getting the player Rigidbody;
     private Rigidbody2D _rb2d;
     private bool _isRb2DNull = false;
@@ -50,9 +45,8 @@ public class GeyserV2 : MonoBehaviour
     private float _thresholdZoneOffset = 1.3f;
 
     [SerializeField] Vector3 playerDetectionOffset;
-    [SerializeField] Vector3 boxDetectionOffset;
-    [SerializeField] private float _insideGeyserXOffset = 0.5f;
-    private Vector3 _geyserInsideOffset;
+    [SerializeField] Vector2 _boxOffset;
+    private float _geyserHeightBox = 1f;
 
     Rigidbody2D playerReference;
 
@@ -73,6 +67,28 @@ public class GeyserV2 : MonoBehaviour
     private void FixedUpdate()
     {
         ApplyGeyserForce();
+    }
+
+    private Vector3 PlayerCheckBox()
+    {
+        return transform.position + playerDetectionOffset;
+    }
+
+    /// <summary>
+    /// Use false if you wanted the check position to be normal and use true if you want it to be inverted.
+    /// </summary>
+    /// <param name="_isInverted"></param>
+    /// <returns></returns>
+    private Vector3 ObjectCheckBox(bool _isInverted)
+    {
+        if(_isInverted)
+        {
+            return transform.position + new Vector3(-_boxOffset.x, _boxOffset.y, 0f);
+        }
+        else
+        {
+            return transform.position + new Vector3(_boxOffset.x, _boxOffset.y, 0f);
+        }
     }
 
     //This method set the default geyser values
@@ -112,13 +128,13 @@ public class GeyserV2 : MonoBehaviour
     //This method checks who is overlaping the geyser hitbox
     private void CheckForOverLaps()
     {
-        //The position that the overlap box will do the check
-        Vector3 checkPositionPlayer = transform.position + playerDetectionOffset;
-        Vector3 checkPositionBox = transform.position + GetGeyserInsideDetectionOffset();
 
-        Collider2D playerOverlap = Physics2D.OverlapBox(checkPositionPlayer, new Vector2(boxLenghtPlayer, geyserSO.geyserHeightPlayer), 0f, LayerMask.GetMask("Player"));
+        Collider2D playerOverlap = Physics2D.OverlapBox(PlayerCheckBox(), new Vector2(boxLenghtPlayer, geyserSO.geyserHeightPlayer), 0f, LayerMask.GetMask("Player"));
 
-        Collider2D boxOverlap = Physics2D.OverlapBox(checkPositionBox, new Vector2(boxLenghtObjects, geyserSO.geyserHeightBox), 0f, LayerMask.GetMask("Objects"));
+        Collider2D boxOverlap = Physics2D.OverlapBox(ObjectCheckBox(false), new Vector2(boxLenghtObjects, _geyserHeightBox), 0f, LayerMask.GetMask("Objects"));
+
+        Collider2D boxOverlap2 = Physics2D.OverlapBox(ObjectCheckBox(true),
+            new Vector2(boxLenghtObjects, _geyserHeightBox), 0f, LayerMask.GetMask("Objects"));
 
         _isPlayerIn = playerOverlap;
 
@@ -126,7 +142,8 @@ public class GeyserV2 : MonoBehaviour
         {
             playerReference = playerOverlap.GetComponent<Rigidbody2D>();
         }
-        _isObjectIn = boxOverlap;
+
+        _isObjectIn = boxOverlap && boxOverlap2;
     }
 
     //This method affects the player when he goes in the geyser
@@ -137,7 +154,6 @@ public class GeyserV2 : MonoBehaviour
             _isPlayerIn = true;
             _rb2d = playerReference;
             _isRb2DNull = false;
-            OnGeyserEnter.Invoke();
         }
         else
         {
@@ -145,7 +161,6 @@ public class GeyserV2 : MonoBehaviour
             _rb2d = null;
             _isRb2DNull = true;
             _wasVelocityCancelled = false;
-            OnGeyserExit.Invoke();
         }
     }
 
@@ -267,11 +282,6 @@ public class GeyserV2 : MonoBehaviour
 
     }
 
-    private Vector3 GetGeyserInsideDetectionOffset()
-    {
-        return new Vector3(transform.position.x > 0f ? +_insideGeyserXOffset : -_insideGeyserXOffset, boxDetectionOffset.y, 0f);
-    }
-
     private Vector2 GetGeyserFinalHeight()
     {
         return new Vector2(_startingPos.x, _startingPos.y + geyserSO.geyserHeightPlayer);
@@ -351,7 +361,8 @@ public class GeyserV2 : MonoBehaviour
     {
         //Visual Debugger Helpers
 
-        Gizmos.matrix = transform.localToWorldMatrix;
+        playerDetectionOffset = new Vector3(0f, geyserSO.geyserHeightPlayer * .5f, 0f);
+
 
         if (_isPlayerIn)
         {
@@ -362,8 +373,11 @@ public class GeyserV2 : MonoBehaviour
             Gizmos.color = Color.red;
         }
 
+        //Gizmos.matrix = transform.localToWorldMatrix;
+
+
         //GeyserCheck(Player)
-        Gizmos.DrawWireCube(Vector3.zero + playerDetectionOffset, new Vector2(boxLenghtPlayer, geyserSO.geyserHeightPlayer));
+        Gizmos.DrawWireCube(PlayerCheckBox(), new Vector2(boxLenghtPlayer, geyserSO.geyserHeightPlayer));
 
         if (_isObjectIn)
         {
@@ -375,7 +389,9 @@ public class GeyserV2 : MonoBehaviour
         }
 
         //GeyserCheck(Box)
-        Vector3 insideOffset = new Vector3(0f + (transform.position.x > 0f ? +_insideGeyserXOffset : -_insideGeyserXOffset),boxDetectionOffset.y,0f);
-        Gizmos.DrawWireCube(insideOffset, new Vector2(boxLenghtObjects, geyserSO.geyserHeightBox));
+
+        Gizmos.DrawWireCube(ObjectCheckBox(true), new Vector2(boxLenghtObjects, _geyserHeightBox));
+
+        Gizmos.DrawWireCube(ObjectCheckBox(false), new Vector2(boxLenghtObjects, _geyserHeightBox));
     }
 }
