@@ -175,7 +175,6 @@ public class GeyserV2 : MonoBehaviour
             else if(!geyserSO.needsThePlayer)
             {
                 _isGeyserOn = true;
-                _isAutoGeyserOn = true ;
             }
             if (_isGeyserOn)
             {
@@ -185,54 +184,13 @@ public class GeyserV2 : MonoBehaviour
         else if (isItPermanent && !_isObjectIn)
         {
             _lerpTime = MAX_TIMER_V;
-            _isAutoGeyserOn = true;
+            //_isAutoGeyserOn = true;
             _delayTime = DEFAULT_TIMER_V;
         }
         else if(isItPermanent && _isObjectIn)
         {
             TurnOffGeyser();
         }
-        //if(_isPlayerIn)
-        //{
-        //    _isGeyserOn = true;
-        //}
-
-        ////Only works if the geyser isn't permanent
-        //if (!isItPermanent)
-        //{
-        //    //if (_isObjectIn)
-        //    //{
-        //    //    TurnOffGeyser();
-        //    //}
-        //    //else if(!_isObjectIn && !geyserSO.needsThePlayer)
-        //    //{
-        //    //    _isAutoGeyserOn = true;
-        //    //    _isGeyserOn = true;
-        //    //}
-        //    //else
-        //    //{
-        //    //    GeyserMover();
-        //    //}
-        //}
-        ////IF it's permanent
-        //else
-        //{
-        //    if (_isObjectIn)
-        //    {
-        //        TurnOffGeyser();
-        //    }
-        //    else
-        //    {
-        //        _lerpTime = MAX_TIMER_V;
-        //        _isAutoGeyserOn = true;
-        //        _delayTime = DEFAULT_TIMER_V;
-        //    }
-        //}
-
-        //if (_isGeyserOn)
-        //{
-        //    GeyserMover();
-        //}
 
         _traceEndPos = Vector2.Lerp(_startingPos, GetGeyserFinalHeight(), _lerpTime);
 
@@ -297,6 +255,21 @@ public class GeyserV2 : MonoBehaviour
             _delayTime = _tempDelayTime;
             _isAtDesiredHeight = false;
         }
+    }
+
+    public bool GetGeyserStatus()
+    {
+        return _isGeyserOn;
+    }
+
+    public bool GetAutoGeyserStatus()
+    {
+        return _isAutoGeyserOn;
+    }
+
+    public GeyserStatsSO GetGeyserSORef()
+    {
+        return geyserSO;
     }
 
     /// <summary>
