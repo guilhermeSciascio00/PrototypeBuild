@@ -59,7 +59,7 @@ public class GeyserV2 : MonoBehaviour
     {
         CheckForOverLaps();
         GeyserStart(geyserSO.isItPermanent);
-
+        Debug.Log(_isAutoGeyserOn);
         PlayerVariablesHelper();
         SetGeyserBottomPosition();
     }
@@ -110,6 +110,7 @@ public class GeyserV2 : MonoBehaviour
         _lineRenderer.SetPosition(1, _startingPos);
     }
 
+    //Calculate the height of the geyser based in the y bottom position.
     private void SetGeyserBottomPosition()
     {
         playerDetectionOffset = new Vector2(0f, geyserSO.geyserHeightPlayer * .5f);
@@ -164,6 +165,7 @@ public class GeyserV2 : MonoBehaviour
         }
     }
 
+    //Start the geyser within specific conditions.
     private void GeyserStart(bool isItPermanent)
     {
         if(!isItPermanent)
@@ -257,6 +259,38 @@ public class GeyserV2 : MonoBehaviour
         }
     }
 
+    //Two parameters, delay timer and if it's permanent or no
+    public bool IsParticlesDelayOver()
+    {
+        if (_isObjectIn)
+        {
+            return true;
+        }
+        //TODO, geyser delay.
+        if (geyserSO.needsThePlayer)
+        {
+            return _isGeyserOn;
+        }
+        else if (!geyserSO.needsThePlayer) 
+        {
+            return _isAutoGeyserOn;
+        }
+        else if (geyserSO.isItPermanent)
+        {
+            return true;
+        }
+        //if (_particleGroundDelay >= DEFAULT_TIMER_V)
+        //{
+        //    _particleGroundDelay -= Time.deltaTime;
+        //    if (_particleGroundDelay <= DEFAULT_TIMER_V) 
+        //    {
+        //        _particleGroundDelay = DEFAULT_TIMER_V;
+        //        return true;
+        //    }
+        //}
+        return false;
+    }
+
     public bool GetGeyserStatus()
     {
         return _isGeyserOn;
@@ -265,6 +299,11 @@ public class GeyserV2 : MonoBehaviour
     public bool GetAutoGeyserStatus()
     {
         return _isAutoGeyserOn;
+    }
+
+    public bool IsGeyserBlocked()
+    {
+        return _isObjectIn;
     }
 
     public GeyserStatsSO GetGeyserSORef()
