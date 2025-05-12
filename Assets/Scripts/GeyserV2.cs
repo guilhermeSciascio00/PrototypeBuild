@@ -59,7 +59,6 @@ public class GeyserV2 : MonoBehaviour
     {
         CheckForOverLaps();
         GeyserStart(geyserSO.isItPermanent);
-        Debug.Log(_isAutoGeyserOn);
         PlayerVariablesHelper();
         SetGeyserBottomPosition();
     }
