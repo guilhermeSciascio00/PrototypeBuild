@@ -3,10 +3,12 @@ using UnityEngine;
 public class GeyserParticles : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    [SerializeField] ParticleSystem geyserParticles;
+    [SerializeField] ParticleSystem geyserWaterParticles;
+    [SerializeField] ParticleSystem geyserQuakeParticles;
     [SerializeField, Range(0f, 3f)] float particleYAdjustment;
 
     GeyserV2 geyserRef;
+    [SerializeField] bool isDebugging = false;
 
     private void Start()
     {
@@ -17,34 +19,64 @@ public class GeyserParticles : MonoBehaviour
     private void Update()
     {
         UpdateParticlesHeight();
-        ParticleSwitch();
+        WaterParticleSwitch();
+        GeyserQuakeParticles();        
     }
 
-    private void ParticleSwitch()
+    private void WaterParticleSwitch()
     {
-        if (geyserRef.GetGeyserStatus() && geyserRef.GetGeyserSORef().needsThePlayer)
+        if (!geyserRef.IsGeyserBlocked())
         {
-            geyserParticles.Play();
-        }
-        else if(geyserRef.GetAutoGeyserStatus() && !geyserRef.GetGeyserSORef().needsThePlayer)
-        {
-            geyserParticles.Play();
-        }
-        else if (geyserRef.GetGeyserSORef().isItPermanent)
-        {
-            geyserParticles.Play();
+            if (geyserRef.GetGeyserStatus() && geyserRef.GetGeyserSORef().needsThePlayer)
+            {
+                if (!geyserWaterParticles.isPlaying)
+                {
+                    geyserWaterParticles.Play();
+                }
+            }
+            else if (geyserRef.GetAutoGeyserStatus())
+            {
+                if (!geyserWaterParticles.isPlaying)
+                {
+                    geyserWaterParticles.Play();
+                }
+            }
+            else if (geyserRef.GetGeyserSORef().isItPermanent)
+            {
+                if (!geyserWaterParticles.isPlaying)
+                {
+                    geyserWaterParticles.Play();
+                }
+            }
+            else
+            {
+                geyserWaterParticles.Stop();
+            }
         }
         else
         {
-            geyserParticles.Stop();
+            geyserWaterParticles.Stop();
         }
-        
+
+    }
+    private void GeyserQuakeParticles()
+    {
+        if (!geyserRef.IsParticlesDelayOver())
+        {
+            geyserQuakeParticles.Play();
+        }
+        else
+        {
+            geyserQuakeParticles.Stop();
+        }
     }
 
     private void UpdateParticlesHeight()
     {
-        //fix here
-        geyserParticles.startSpeed = (geyserRef.GetGeyserSORef().geyserHeightPlayer * .5f) + particleYAdjustment;
+        ParticleSystem.MainModule mainParticleSyS = geyserWaterParticles.main;
+
+        mainParticleSyS.startSpeed = (geyserRef.GetGeyserSORef().geyserHeightPlayer * .5f) + particleYAdjustment;
+
     }
 
 }
