@@ -11,10 +11,13 @@ public class Geyser : MonoBehaviour
 
     //GeyserVariables
     private float _lerpTimer = 0f;
-    private float geyserDelay;
+    private float _geyserDelay;
     private float _tempDelayTime = 0f;
+    private float _tinyDelay = .89f;
+    private float _tempTinyDelay;
     private bool _canResetIT = false;
     private bool _canSkip = false;
+    private bool _geyserGuard = false;
     private LineRenderer _lineRenderer = null;
     private Vector2 _geyserCurrentPos = Vector2.zero;
 
@@ -37,8 +40,9 @@ public class Geyser : MonoBehaviour
     private void Start()
     {
         GeyserSORef = geyserSO;
-        geyserDelay = geyserSO.geyserDelay;
-        _tempDelayTime = geyserDelay;
+        _geyserDelay = geyserSO.geyserDelay;
+        _tempTinyDelay = _tinyDelay;
+        _tempDelayTime = _geyserDelay;
         _lineRenderer = GetComponent<LineRenderer>();
 
         if (!_lineRenderer.enabled)
@@ -49,7 +53,7 @@ public class Geyser : MonoBehaviour
         SetBottomPosition();
         _lineRenderer.SetPosition(1, transform.position);
 
-        if(geyserDelay <= MIN_TIMER_VALUE)
+        if(_geyserDelay <= MIN_TIMER_VALUE)
         {
             _canSkip = true;
         }
@@ -82,6 +86,7 @@ public class Geyser : MonoBehaviour
 
         _isPlayerIn = playerOverlap;
         if (!_isPlayerIn) _wasVelocityCancelled = false;
+        if (_isPlayerIn) _geyserGuard = true;
         _isObjectIn = boxOverlap && boxOverlap2;
         IsObjectIn = _isObjectIn;
     }
@@ -89,16 +94,32 @@ public class Geyser : MonoBehaviour
     //GeyserTimer
     private bool IsTimerOver()
     {
-        if(geyserDelay >= MIN_TIMER_VALUE)
+        if(_geyserDelay >= MIN_TIMER_VALUE)
         {
-            geyserDelay -= Time.deltaTime;
-            if(geyserDelay <= MIN_TIMER_VALUE)
+            _geyserDelay -= Time.deltaTime;
+            if(_geyserDelay <= MIN_TIMER_VALUE)
             {
-                geyserDelay = MIN_TIMER_VALUE;
+                _geyserDelay = MIN_TIMER_VALUE;
                 return true;
             }
         }
         return false;
+    }
+
+    private bool IsTinyDelayOver()
+    {
+        
+        if (_tinyDelay >= MIN_TIMER_VALUE)
+        {
+            _tinyDelay -= Time.deltaTime;
+            if (_tinyDelay <= MIN_TIMER_VALUE)
+            {
+                _tinyDelay = MIN_TIMER_VALUE;
+                return true;
+            }
+        }
+        return false;
+    
     }
 
     /// <summary>
@@ -107,35 +128,40 @@ public class Geyser : MonoBehaviour
     /// <param name="invert"></param>
     private void LerpTimer(bool invert)
     {
+        
         _lerpTimer += invert ? -(Time.deltaTime * geyserSO.geyserSpeedDown) : Time.deltaTime * geyserSO.geyserSpeedUP;
 
         bool lerpChecker = invert ? _lerpTimer <= MIN_TIMER_VALUE : _lerpTimer >= MAX_LERP_VALUE;
 
-      
+        if(_lerpTimer <= MIN_TIMER_VALUE && geyserSO.needsThePlayer)
+        {
+            _tinyDelay = _tempTinyDelay;
+        }
+
         if (lerpChecker)
         {
             _lerpTimer = invert ? MIN_TIMER_VALUE : MAX_LERP_VALUE;
             _canResetIT = invert ? false : true;
             if(!geyserSO.needsThePlayer) ResetTimer();
         }
-        
-        
     }
 
     private void ResetTimer()
     {
-        if (geyserDelay <= MIN_TIMER_VALUE)
+        if (_geyserDelay <= MIN_TIMER_VALUE)
         {
-            
-            geyserDelay = _tempDelayTime;
-            if (geyserSO.needsThePlayer) geyserDelay *= 2f;
+            _geyserDelay = _tempDelayTime;
+            if (geyserSO.needsThePlayer) 
+            {
+                _geyserGuard = false;
+            }   
         }
     }
 
     private void ResetGeyser()
     {
         _lerpTimer = MIN_TIMER_VALUE;
-        geyserDelay = _tempDelayTime;
+        _geyserDelay = _tempDelayTime;
         _canResetIT = false;
     }
 
@@ -150,7 +176,7 @@ public class Geyser : MonoBehaviour
             {
                 LerpTimer(false);
             }
-            else if(_canResetIT && geyserDelay <= MIN_TIMER_VALUE)
+            else if(_canResetIT && _geyserDelay <= MIN_TIMER_VALUE)
             {
                 LerpTimer(true);
             }
@@ -158,12 +184,12 @@ public class Geyser : MonoBehaviour
         }
         else if(geyserSO.needsThePlayer)
         {
-            if (_isPlayerIn)
+            if (_geyserGuard && IsTinyDelayOver())
             {
                 LerpTimer(false);
                 ResetTimer();
             }
-            else if (!_isPlayerIn && IsTimerOver())
+            else if (!_geyserGuard)
             { 
                 LerpTimer(true); 
             }
@@ -206,6 +232,7 @@ public class Geyser : MonoBehaviour
             return true;
         }
     }
+
 
     private Vector2 GetGeyserFinalHeight()
     {

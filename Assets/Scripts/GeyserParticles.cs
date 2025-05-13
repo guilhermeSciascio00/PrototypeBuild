@@ -22,11 +22,12 @@ public class GeyserParticles : MonoBehaviour
         UpdateParticlesHeight();
         WaterParticleSwitch();
         GeyserQuakeParticles();
+
     }
 
     private void WaterParticleSwitch()
     {
-        if(geyserRef.HasGeyserStarted()) 
+        if (geyserRef.HasGeyserStarted())
         {
             GeyserParticleSyS(geyserWaterParticles, playIT: true);
         }
@@ -39,7 +40,6 @@ public class GeyserParticles : MonoBehaviour
     }
     private void GeyserQuakeParticles()
     {
-
         if (!geyserRef.HasGeyserStarted())
         {
             GeyserParticleSyS(geyserQuakeParticles, playIT: true);
@@ -48,6 +48,7 @@ public class GeyserParticles : MonoBehaviour
         if (geyserRef.HasGeyserStarted() || geyserRef.IsObjectIn)
         {
             GeyserParticleSyS(geyserQuakeParticles, playIT: false);
+            
         }
     }
 
@@ -56,18 +57,23 @@ public class GeyserParticles : MonoBehaviour
         switch (playIT)
         {
             case true:
-                if(!particleSyS.isPlaying) particleSyS.Play();
+                if (!particleSyS.isPlaying)
+                {
+                    particleSyS.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                    particleSyS.Play();
+                }
+
                 break;
             case false:
-                if (particleSyS.isPlaying) particleSyS.Stop();
+                if (particleSyS.isPlaying)
+                {
+                    particleSyS.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                }
                 break;
         }
 
     }
 
-    
-
-    
 
 private void UpdateParticlesHeight()
     {
