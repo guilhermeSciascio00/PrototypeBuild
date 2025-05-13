@@ -15,7 +15,7 @@ MonoBehaviour:
   geyserSpeedUP: 3
   geyserSpeedDown: 2
   geyserDelay: 2
-  geyserHeight: 6.2
+  geyserHeightPlayer: 3
   geyserUPForce: 2
   geyserDownForce: 2
   needsThePlayer: 0

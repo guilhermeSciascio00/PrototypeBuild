@@ -5,18 +5,13 @@ public class GeyserV2 : MonoBehaviour
 {
     //TODO: Arrange the variables by functionality
 
-
-    //We use these events to prevent the player to jump when it is inside the geyser
-    public static event Action OnGeyserEnter;
-    public static event Action OnGeyserExit;
-
     //Getting the player Rigidbody;
     private Rigidbody2D _rb2d;
     private bool _isRb2DNull = false;
 
     //GeyserBoxCastSize
-    [SerializeField] float boxHeight = 4f;
-    [SerializeField] float boxLenght = 1f;
+    [SerializeField] float boxLenghtPlayer = 1f;
+    [SerializeField] float boxLenghtObjects = 1f;
     
     //LineRenderer Properties
     private LineRenderer _lineRenderer;
@@ -40,15 +35,18 @@ public class GeyserV2 : MonoBehaviour
     private bool _flewAboveIt = false;
     private bool _wasVelocityCancelled = false;
 
-    //Geyzer Force Mult and Offset
-    private float _forceMultiplier = 50f;
-    private float _thresholdZoneOffset = 1.3f;
-
     //ScriptableObject in action!!
     [SerializeField] GeyserStatsSO geyserSO;
 
     private Vector2 _startingPos;
-    [SerializeField] Vector3 offset;
+
+    //Geyzer Force Mult and Offset
+    private float _forceMultiplier = 50f;
+    private float _thresholdZoneOffset = 1.3f;
+
+    [SerializeField] Vector3 playerDetectionOffset;
+    [SerializeField] Vector2 _boxOffset;
+    private float _geyserHeightBox = 1f;
 
     Rigidbody2D playerReference;
 
@@ -71,13 +69,34 @@ public class GeyserV2 : MonoBehaviour
         ApplyGeyserForce();
     }
 
+    private Vector3 PlayerCheckBox()
+    {
+        return transform.position + playerDetectionOffset;
+    }
+
+    /// <summary>
+    /// Use false if you wanted the check position to be normal and use true if you want it to be inverted.
+    /// </summary>
+    /// <param name="_isInverted"></param>
+    /// <returns></returns>
+    private Vector3 ObjectCheckBox(bool _isInverted)
+    {
+        if(_isInverted)
+        {
+            return transform.position + new Vector3(-_boxOffset.x, _boxOffset.y, 0f);
+        }
+        else
+        {
+            return transform.position + new Vector3(_boxOffset.x, _boxOffset.y, 0f);
+        }
+    }
+
     //This method set the default geyser values
     private void SetGeyserStartValues()
     {
         SetGeyserDLTimer();
 
         // *.5f is usually faster than / 2
-        offset = new Vector2(0f, geyserSO.geyserHeight * .5f);
         _lineRenderer = GetComponent<LineRenderer>();
 
         if (!_lineRenderer.enabled)
@@ -93,6 +112,7 @@ public class GeyserV2 : MonoBehaviour
 
     private void SetGeyserBottomPosition()
     {
+        playerDetectionOffset = new Vector2(0f, geyserSO.geyserHeightPlayer * .5f);
         _startingPos = transform.position;
         _lineRenderer.SetPosition(0, _startingPos);
     }
@@ -108,12 +128,13 @@ public class GeyserV2 : MonoBehaviour
     //This method checks who is overlaping the geyser hitbox
     private void CheckForOverLaps()
     {
-        //The position that the overlap box will do the check
-        Vector3 checkPosition = transform.position + offset;
 
-        Collider2D playerOverlap = Physics2D.OverlapBox(checkPosition, new Vector2(boxLenght, geyserSO.geyserHeight), 0f, LayerMask.GetMask("Player"));
+        Collider2D playerOverlap = Physics2D.OverlapBox(PlayerCheckBox(), new Vector2(boxLenghtPlayer, geyserSO.geyserHeightPlayer), 0f, LayerMask.GetMask("Player"));
 
-        Collider2D boxOverlap = Physics2D.OverlapBox(checkPosition, new Vector2(boxLenght, geyserSO.geyserHeight), 0f, LayerMask.GetMask("Objects"));
+        Collider2D boxOverlap = Physics2D.OverlapBox(ObjectCheckBox(false), new Vector2(boxLenghtObjects, _geyserHeightBox), 0f, LayerMask.GetMask("Objects"));
+
+        Collider2D boxOverlap2 = Physics2D.OverlapBox(ObjectCheckBox(true),
+            new Vector2(boxLenghtObjects, _geyserHeightBox), 0f, LayerMask.GetMask("Objects"));
 
         _isPlayerIn = playerOverlap;
 
@@ -121,7 +142,8 @@ public class GeyserV2 : MonoBehaviour
         {
             playerReference = playerOverlap.GetComponent<Rigidbody2D>();
         }
-        _isObjectIn = boxOverlap;
+
+        _isObjectIn = boxOverlap && boxOverlap2;
     }
 
     //This method affects the player when he goes in the geyser
@@ -132,7 +154,6 @@ public class GeyserV2 : MonoBehaviour
             _isPlayerIn = true;
             _rb2d = playerReference;
             _isRb2DNull = false;
-            OnGeyserEnter.Invoke();
         }
         else
         {
@@ -140,7 +161,6 @@ public class GeyserV2 : MonoBehaviour
             _rb2d = null;
             _isRb2DNull = true;
             _wasVelocityCancelled = false;
-            OnGeyserExit.Invoke();
         }
     }
 
@@ -155,7 +175,6 @@ public class GeyserV2 : MonoBehaviour
             else if(!geyserSO.needsThePlayer)
             {
                 _isGeyserOn = true;
-                _isAutoGeyserOn = true ;
             }
             if (_isGeyserOn)
             {
@@ -165,54 +184,13 @@ public class GeyserV2 : MonoBehaviour
         else if (isItPermanent && !_isObjectIn)
         {
             _lerpTime = MAX_TIMER_V;
-            _isAutoGeyserOn = true;
+            //_isAutoGeyserOn = true;
             _delayTime = DEFAULT_TIMER_V;
         }
         else if(isItPermanent && _isObjectIn)
         {
             TurnOffGeyser();
         }
-        //if(_isPlayerIn)
-        //{
-        //    _isGeyserOn = true;
-        //}
-
-        ////Only works if the geyser isn't permanent
-        //if (!isItPermanent)
-        //{
-        //    //if (_isObjectIn)
-        //    //{
-        //    //    TurnOffGeyser();
-        //    //}
-        //    //else if(!_isObjectIn && !geyserSO.needsThePlayer)
-        //    //{
-        //    //    _isAutoGeyserOn = true;
-        //    //    _isGeyserOn = true;
-        //    //}
-        //    //else
-        //    //{
-        //    //    GeyserMover();
-        //    //}
-        //}
-        ////IF it's permanent
-        //else
-        //{
-        //    if (_isObjectIn)
-        //    {
-        //        TurnOffGeyser();
-        //    }
-        //    else
-        //    {
-        //        _lerpTime = MAX_TIMER_V;
-        //        _isAutoGeyserOn = true;
-        //        _delayTime = DEFAULT_TIMER_V;
-        //    }
-        //}
-
-        //if (_isGeyserOn)
-        //{
-        //    GeyserMover();
-        //}
 
         _traceEndPos = Vector2.Lerp(_startingPos, GetGeyserFinalHeight(), _lerpTime);
 
@@ -264,7 +242,7 @@ public class GeyserV2 : MonoBehaviour
 
     private Vector2 GetGeyserFinalHeight()
     {
-        return new Vector2(_startingPos.x, _startingPos.y + geyserSO.geyserHeight);
+        return new Vector2(_startingPos.x, _startingPos.y + geyserSO.geyserHeightPlayer);
     }
 
     private void TurnOffGeyser()
@@ -277,6 +255,21 @@ public class GeyserV2 : MonoBehaviour
             _delayTime = _tempDelayTime;
             _isAtDesiredHeight = false;
         }
+    }
+
+    public bool GetGeyserStatus()
+    {
+        return _isGeyserOn;
+    }
+
+    public bool GetAutoGeyserStatus()
+    {
+        return _isAutoGeyserOn;
+    }
+
+    public GeyserStatsSO GetGeyserSORef()
+    {
+        return geyserSO;
     }
 
     /// <summary>
@@ -341,23 +334,37 @@ public class GeyserV2 : MonoBehaviour
     {
         //Visual Debugger Helpers
 
-        Gizmos.matrix = transform.localToWorldMatrix;
+        playerDetectionOffset = new Vector3(0f, geyserSO.geyserHeightPlayer * .5f, 0f);
+
 
         if (_isPlayerIn)
         {
             Gizmos.color = Color.green;
-        }
-        else if(_isObjectIn)
-        {
-            Gizmos.color = Color.blue;
         }
         else if(!(_isPlayerIn && _isObjectIn))
         {
             Gizmos.color = Color.red;
         }
 
+        //Gizmos.matrix = transform.localToWorldMatrix;
 
-        Gizmos.DrawWireCube(Vector3.zero + offset, new Vector2(boxLenght, geyserSO.geyserHeight));
 
+        //GeyserCheck(Player)
+        Gizmos.DrawWireCube(PlayerCheckBox(), new Vector2(boxLenghtPlayer, geyserSO.geyserHeightPlayer));
+
+        if (_isObjectIn)
+        {
+            Gizmos.color = Color.blue;
+        }
+        else
+        {
+            Gizmos.color = Color.yellow;
+        }
+
+        //GeyserCheck(Box)
+
+        Gizmos.DrawWireCube(ObjectCheckBox(true), new Vector2(boxLenghtObjects, _geyserHeightBox));
+
+        Gizmos.DrawWireCube(ObjectCheckBox(false), new Vector2(boxLenghtObjects, _geyserHeightBox));
     }
 }
