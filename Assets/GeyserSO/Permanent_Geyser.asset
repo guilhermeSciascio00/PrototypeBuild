@@ -15,8 +15,8 @@ MonoBehaviour:
   geyserSpeedUP: 2
   geyserSpeedDown: 2
   geyserDelay: 0
-  geyserHeightPlayer: 5
+  geyserHeightPlayer: 8
   geyserUPForce: 3
   geyserDownForce: 4
   needsThePlayer: 0
-  isItPermanent: 1
+  isItPermanent: 0
