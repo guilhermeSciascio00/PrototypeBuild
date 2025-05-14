@@ -491,9 +491,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: BaseCharacter
       objectReference: {fileID: 0}
+    - target: {fileID: 8762919016483664973, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
+      propertyPath: groundPosition.y
+      value: -0.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 8762919016483664973, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
+      propertyPath: groundDetectionSize.x
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 8762919016483664973, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
+      propertyPath: groundDetectionSize.y
+      value: 0.08
+      objectReference: {fileID: 0}
     - target: {fileID: 9089758566664662779, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.96
+      value: -2.09
       objectReference: {fileID: 0}
     - target: {fileID: 9089758566664662779, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
       propertyPath: m_LocalPosition.y
