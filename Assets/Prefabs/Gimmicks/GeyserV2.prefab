@@ -49,7 +49,7 @@ ParticleSystem:
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
   looping: 1
-  prewarm: 1
+  prewarm: 0
   playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
@@ -339,7 +339,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -392,7 +392,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeZ:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -4843,9 +4843,11 @@ GameObject:
   m_Component:
   - component: {fileID: 7076824921691211294}
   - component: {fileID: 7057085271229917849}
-  m_Layer: 0
+  - component: {fileID: 5811847219427869441}
+  - component: {fileID: 4428434397823319829}
+  m_Layer: 9
   m_Name: GeyserV2
-  m_TagString: Untagged
+  m_TagString: Geyser
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4913,7 +4915,7 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Positions:
-  - {x: 5, y: -4.39, z: 0}
+  - {x: 4.68, y: -4.39, z: 0}
   - {x: 5, y: 1.77, z: 1}
   m_Parameters:
     serializedVersion: 3
@@ -4974,6 +4976,38 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!114 &5811847219427869441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2197350088280440034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c97f2b2c4e91deb46a456769b2a781a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  geyserSO: {fileID: 11400000, guid: 6d9ebd4390eba4148980a6e85f8e12eb, type: 2}
+  playerDetectionOffset: {x: 0, y: 3, z: 0}
+  _boxOffset: {x: 0.79, y: 0.49, z: 0}
+  boxLenghtPlayer: 1
+  boxLenghtObjects: 1
+--- !u!114 &4428434397823319829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2197350088280440034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e66c01bf222da34c85d1d1e373678ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  geyserWaterParticles: {fileID: 264617893476701474}
+  geyserQuakeParticles: {fileID: 4554341081606783682}
+  particleYAdjustment: 3
 --- !u!1 &9193284611893995506
 GameObject:
   m_ObjectHideFlags: 0
@@ -5015,7 +5049,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9193284611893995506}
   serializedVersion: 8
-  lengthInSec: 2
+  lengthInSec: 0.1
   simulationSpeed: 2.23
   stopAction: 0
   cullingMode: 0
@@ -5023,7 +5057,7 @@ ParticleSystem:
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
   looping: 1
-  prewarm: 1
+  prewarm: 0
   playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1

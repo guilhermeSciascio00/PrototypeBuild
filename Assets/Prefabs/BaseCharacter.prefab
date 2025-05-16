@@ -175,3 +175,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 674093549dc5d574482dad065b16d116, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  groundPosition: {x: 0, y: -0.37}
+  groundDetectionSize: {x: 0.75, y: 0.08}

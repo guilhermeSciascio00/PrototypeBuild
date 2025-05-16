@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d1cd812024def68409abdf9dbbe6ab45, type: 3}
-  m_Name: NormalAutoGeyser
+  m_Name: AlternativeGeyser
   m_EditorClassIdentifier: 
   geyserSpeedUP: 3
   geyserSpeedDown: 2
