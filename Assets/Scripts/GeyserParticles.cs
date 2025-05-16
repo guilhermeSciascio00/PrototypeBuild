@@ -3,8 +3,6 @@ using UnityEngine;
 public class GeyserParticles : MonoBehaviour
 {
 
-    //TRY PAUSE AND CLEAR
-
     [SerializeField] ParticleSystem geyserWaterParticles;
     [SerializeField] ParticleSystem geyserQuakeParticles;
     [SerializeField, Range(0f, 3f)] float particleYAdjustment;

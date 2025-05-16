@@ -108,7 +108,6 @@ public class Geyser : MonoBehaviour
 
     private bool IsTinyDelayOver()
     {
-        
         if (_tinyDelay >= MIN_TIMER_VALUE)
         {
             _tinyDelay -= Time.deltaTime;
@@ -119,7 +118,6 @@ public class Geyser : MonoBehaviour
             }
         }
         return false;
-    
     }
 
     /// <summary>
@@ -284,8 +282,8 @@ public class Geyser : MonoBehaviour
 
         Gizmos.color = _isObjectIn ? Color.blue : Color.yellow;
 
-        Gizmos.DrawWireCube(ObjectCheckBox(true), new Vector2(boxLenghtObjects, _geyserBoxHeight));
+        //Gizmos.DrawWireCube(ObjectCheckBox(true), new Vector2(boxLenghtObjects, _geyserBoxHeight));
 
-        Gizmos.DrawWireCube(ObjectCheckBox(false), new Vector2(boxLenghtObjects, _geyserBoxHeight));
+        //Gizmos.DrawWireCube(ObjectCheckBox(false), new Vector2(boxLenghtObjects, _geyserBoxHeight));
     }
 }
