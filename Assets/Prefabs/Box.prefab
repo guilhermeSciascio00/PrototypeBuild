@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7979113575758433230}
   - component: {fileID: 1043950560585309454}
   - component: {fileID: 4955329556984587479}
+  - component: {fileID: 2083998031625785668}
   m_Layer: 8
   m_Name: Box
   m_TagString: Objects
@@ -101,10 +102,10 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 75
+  m_Mass: 5
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 5
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -162,3 +163,16 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &2083998031625785668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7381218538186326011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 020252dcc6bc3f247a3a7c9604ce9ed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocityLimit: 25

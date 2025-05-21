@@ -12,17 +12,29 @@ PrefabInstance:
       propertyPath: m_Name
       value: GeyserV2 Permanent
       objectReference: {fileID: 0}
+    - target: {fileID: 2197350088280440034, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5811847219427869441, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
       propertyPath: geyserSO
       value: 
       objectReference: {fileID: 11400000, guid: 4f5afa197d9ca22459f97432700707fb, type: 2}
+    - target: {fileID: 5811847219427869441, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
+      propertyPath: geyserCollision
+      value: 
+      objectReference: {fileID: 5896532880304986277}
+    - target: {fileID: 5811847219427869441, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
+      propertyPath: playerDetectionOffset.y
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7076824921691211294, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -6.14
       objectReference: {fileID: 0}
     - target: {fileID: 7076824921691211294, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -3.65
       objectReference: {fileID: 0}
     - target: {fileID: 7076824921691211294, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
       propertyPath: m_LocalPosition.z
@@ -56,8 +68,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8873899965358323294, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
+      propertyPath: m_Size.y
+      value: 0.94
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
+--- !u!1 &5896532880304986277 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3111323350211820055, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
+  m_PrefabInstance: {fileID: 8861137329356382898}
+  m_PrefabAsset: {fileID: 0}

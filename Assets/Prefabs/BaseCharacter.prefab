@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3511323746332733709}
   - component: {fileID: 8448474497351241133}
   - component: {fileID: 8762919016483664973}
+  - component: {fileID: 2911995040115741419}
   m_Layer: 6
   m_Name: BaseCharacter
   m_TagString: Player
@@ -177,3 +178,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   groundPosition: {x: 0, y: -0.37}
   groundDetectionSize: {x: 0.75, y: 0.08}
+--- !u!114 &2911995040115741419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8042690313871168944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 020252dcc6bc3f247a3a7c9604ce9ed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocityLimit: 25
