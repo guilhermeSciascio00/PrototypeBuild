@@ -1,7 +1,11 @@
+using System.Data.Common;
 using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
 {
+    [SerializeField] Vector2 groundPosition;
+    [SerializeField] Vector2 groundDetectionSize;
+
     InputSystem_Actions inputSystem;
 
     Vector2 _movingDirection;
@@ -10,8 +14,6 @@ public class CharacterMovement : MonoBehaviour
 
     Rigidbody2D rb2D;
     bool _hasJumped = false;
-
-    RaycastHit2D hit;
 
     void Awake()
     {
@@ -30,9 +32,6 @@ public class CharacterMovement : MonoBehaviour
         inputSystem.Player.Jump.performed += Jump_performed;
 
     }
-
-
-
 
     private void FixedUpdate()
     {
@@ -72,23 +71,33 @@ public class CharacterMovement : MonoBehaviour
 
     private bool IsOnJumpableSurface()
     {
-        hit = Physics2D.Raycast(transform.position, Vector2.down, .5f, LayerMask.GetMask("Ground", "Objects"));
+        Collider2D groundDetector = Physics2D.OverlapBox(GetGroundDetectorPos(), GetGroundSizeDetection(), 0f, LayerMask.GetMask("Ground", "Objects"));
 
-        if (hit)
+        if (groundDetector && !groundDetector.CompareTag("Player"))
         {
-            if (!hit.collider.CompareTag("Player"))
-            {
-                return true;
-            }
+            return true;
         }
+
         return false;
+    }
+
+    private Vector2 GetGroundDetectorPos()
+    {
+        return new Vector2(transform.position.x + groundPosition.x, transform.position.y + groundPosition.y);
+    }
+
+    private Vector2 GetGroundSizeDetection()
+    {
+        return new Vector2(groundDetectionSize.x, groundDetectionSize.y);
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
 
-        Gizmos.DrawRay(transform.position, new Vector2(0f, -0.5f));
-        Gizmos.DrawRay(transform.position, hit.point);
+        Gizmos.DrawWireCube(GetGroundDetectorPos(), GetGroundSizeDetection());
+
+        //Gizmos.DrawRay(transform.position, new Vector2(0f, -0.5f));
+        //Gizmos.DrawRay(transform.position, hit.point);
     }
 }
