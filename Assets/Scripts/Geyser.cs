@@ -24,9 +24,12 @@ public class Geyser : MonoBehaviour
 
     //GeyserDetectionVariables
     [SerializeField] Vector3 playerDetectionOffset;
+    [SerializeField] GameObject geyserCollision;
     [SerializeField] Vector3 _boxOffset;
     [SerializeField] float boxLenghtPlayer = 1f;
     [SerializeField] float boxLenghtObjects = 1f;
+
+
     private float _geyserBoxHeight = 1f;
     private bool _isPlayerIn;
     private bool _isObjectIn;
@@ -45,14 +48,17 @@ public class Geyser : MonoBehaviour
         _tempDelayTime = _geyserDelay;
         _lineRenderer = GetComponent<LineRenderer>();
 
+
         if (!_lineRenderer.enabled)
         {
             _lineRenderer.enabled = true;
         }
 
-        SetBottomPosition();
         _lineRenderer.SetPosition(1, transform.position);
 
+        CheckForOverLaps();
+        SetBottomPosition();
+        
         if(_geyserDelay <= MIN_TIMER_VALUE)
         {
             _canSkip = true;
@@ -78,7 +84,6 @@ public class Geyser : MonoBehaviour
         Collider2D playerOverlap = Physics2D.OverlapBox(PlayerCheckBox(), new Vector2(boxLenghtPlayer, geyserSO.geyserHeightPlayer), 0f, LayerMask.GetMask("Player"));
 
         _playerRef = playerOverlap?.gameObject;
-
         Collider2D boxOverlap = Physics2D.OverlapBox(ObjectCheckBox(false), new Vector2(boxLenghtObjects, _geyserBoxHeight), 0f, LayerMask.GetMask("Objects"));
 
         Collider2D boxOverlap2 = Physics2D.OverlapBox(ObjectCheckBox(true),
@@ -89,6 +94,7 @@ public class Geyser : MonoBehaviour
         if (_isPlayerIn) _geyserGuard = true;
         _isObjectIn = boxOverlap && boxOverlap2;
         IsObjectIn = _isObjectIn;
+
     }
 
     //GeyserTimer
@@ -194,10 +200,13 @@ public class Geyser : MonoBehaviour
         }
         else if(_canSkip && !_isObjectIn && !geyserSO.needsThePlayer)
         {
+            
             _lerpTimer = MAX_LERP_VALUE;
         }
 
         _geyserCurrentPos = Vector2.Lerp(transform.position, GetGeyserFinalHeight(), _lerpTimer);
+
+        geyserCollision.transform.position = _geyserCurrentPos;
 
         _lineRenderer.SetPosition(1, _geyserCurrentPos);
 
@@ -243,6 +252,10 @@ public class Geyser : MonoBehaviour
     {
         playerDetectionOffset = new Vector2(0f, geyserSO.geyserHeightPlayer * .5f);
         _lineRenderer.SetPosition(0, transform.position);
+
+        if (_isObjectIn) return;
+
+        geyserCollision.GetComponent<BoxCollider2D>().size = Vector2.one;
     }
 
     private Vector3 PlayerCheckBox()
