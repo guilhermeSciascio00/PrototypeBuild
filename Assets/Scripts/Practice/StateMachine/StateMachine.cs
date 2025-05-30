@@ -54,15 +54,21 @@ public class StateMachine : MonoBehaviour
         GetComponent<SpriteRenderer>().color = _currentStateColor;
     }
 
+    
+
     private void OnDrawGizmos()
     {
-        Handles.color = Color.green;
+        GUIStyle style = new GUIStyle();
+        style.normal.textColor = Color.green;
+        style.fontStyle = FontStyle.Bold;
 
-        Handles.Label(new Vector3(transform.position.x - 2f, transform.position.y + 2f, transform.position.z), $"CurrentState: {_currentState}");
+
+
+        Handles.Label(new Vector3(transform.position.x - 2f, transform.position.y + 2f, transform.position.z), $"CurrentState: {_currentState}", style);
 
         if(Application.isPlaying)
         {
-            Handles.Label(new Vector3(transform.position.x - 2f, transform.position.y + 1.5f, transform.position.z), $"CurrentRunTime: {GetRunTime():F2}");
+            Handles.Label(new Vector3(transform.position.x - 2f, transform.position.y + 1.5f, transform.position.z), $"CurrentRunTime: {GetRunTime():F2}",style);
         }
     }
 }
