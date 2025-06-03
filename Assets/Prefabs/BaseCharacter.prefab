@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4119867561220860304}
   - component: {fileID: 8416277061863074149}
   m_Layer: 0
-  m_Name: WalkingState
+  m_Name: MovingState
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -146,12 +146,12 @@ MonoBehaviour:
   playerRefRB2D: {fileID: 3511323746332733709}
   groundPosition: {x: 0, y: -0.37}
   groundDetectionSize: {x: 0.75, y: 0.08}
-  WalkingState: {fileID: 0}
+  MovingState: {fileID: 0}
   JumpingState: {fileID: 0}
   IdlingState: {fileID: 0}
   FallingState: {fileID: 0}
   _playerSpeed: 5
-  _playerJumpForce: 15
+  _playerJumpForce: 18
 --- !u!1 &3268262512707691376
 GameObject:
   m_ObjectHideFlags: 0

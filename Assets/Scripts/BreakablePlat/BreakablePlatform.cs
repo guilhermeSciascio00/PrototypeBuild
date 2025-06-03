@@ -188,9 +188,6 @@ public class BreakablePlatform : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireCube(GetBoxPosition(), GetCheckBoxSize());
-
         Gizmos.color = breakablePlatRef.activeSelf ? Color.green : Color.red;
 
         Gizmos.DrawWireCube(GetBoxPosition(), GetCheckBoxSize() * .5f);

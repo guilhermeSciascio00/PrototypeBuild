@@ -613,6 +613,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &836720360
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 836720361}
+  - component: {fileID: 836720362}
+  m_Layer: 0
+  m_Name: BreakingState
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &836720361
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 836720360}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1352136814}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &836720362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 836720360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6644368da5ad46a448207b3180bcba15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerStateMachineRef: {fileID: 0}
+  BrkableStateMachineRef: {fileID: 1352136815}
 --- !u!1001 &877477542
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -621,14 +667,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 244798899084562972, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
-      propertyPath: m_Name
-      value: MovingState
-      objectReference: {fileID: 0}
-    - target: {fileID: 5031488451781968668, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
-      propertyPath: _playerJumpForce
-      value: 18
-      objectReference: {fileID: 0}
     - target: {fileID: 8042690313871168944, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
       propertyPath: m_Name
       value: BaseCharacter
@@ -10353,9 +10391,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1300110310}
-  - component: {fileID: 1300110311}
   m_Layer: 0
-  m_Name: BreakablePlatformCode
+  m_Name: BreakablePlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10370,31 +10407,122 @@ Transform:
   m_GameObject: {fileID: 1300110309}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.74, y: -1.11, z: 0}
+  m_LocalPosition: {x: -2.6, y: 0.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2142258850}
+  - {fileID: 1352136814}
   m_Father: {fileID: 1491626419}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1300110311
+--- !u!1 &1352136813
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1352136814}
+  - component: {fileID: 1352136815}
+  m_Layer: 0
+  m_Name: BreakableStateMachine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1352136814
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352136813}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1801445289}
+  - {fileID: 836720361}
+  - {fileID: 1489344289}
+  m_Father: {fileID: 1300110310}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1352136815
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1300110309}
+  m_GameObject: {fileID: 1352136813}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65f0616c9118769418bf5051577d71fe, type: 3}
+  m_Script: {fileID: 11500000, guid: f2d7dedf258e65c4a8a764f6d45cd57c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  breakablePlatRef: {fileID: 2142258849}
-  platformShakeParticle: {fileID: 1283611236}
-  fallPlatformParticle: {fileID: 1161682928}
-  boxOffset: {x: 0.46, y: 0.05}
-  boxPosOffset: {x: -0.02, y: 0.35}
-  circleArea: 1.32
+  _currentState: {fileID: 0}
+  _lastState: {fileID: 0}
+  RootObjectTransform: {fileID: 1300110310}
+  RootObjectAnimator: {fileID: 0}
+  stateTextOffset: {x: 0, y: 1.66, z: 0}
+  VisualPlatRef: {fileID: 2142258849}
+  breakingParticleSyS: {fileID: 1283611236}
+  fallingParticleSyS: {fileID: 1161682928}
+  _boxSize: {x: 1.9, y: 0.08}
+  _boxPositioning: {x: 0, y: 0.01}
+  _quakeMagnitude: 0.12
+  circleRadius: 1.32
+  ActiveState: {fileID: 0}
+  BreakingState: {fileID: 0}
+  BrokenState: {fileID: 0}
+--- !u!1 &1489344288
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1489344289}
+  - component: {fileID: 1489344290}
+  m_Layer: 0
+  m_Name: BrokenState
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1489344289
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1489344288}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1352136814}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1489344290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1489344288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14e67a0c477805445a2d8fa51a33ccfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerStateMachineRef: {fileID: 0}
+  BrkableStateMachineRef: {fileID: 1352136815}
 --- !u!1 &1491626418
 GameObject:
   m_ObjectHideFlags: 0
@@ -10441,7 +10569,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5196304597027736211, guid: a78abbb3278ff244bab4a11a37f48186, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.96
+      value: -6.18
       objectReference: {fileID: 0}
     - target: {fileID: 5196304597027736211, guid: a78abbb3278ff244bab4a11a37f48186, type: 3}
       propertyPath: m_LocalPosition.y
@@ -10622,6 +10750,52 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!1 &1801445288
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1801445289}
+  - component: {fileID: 1801445290}
+  m_Layer: 0
+  m_Name: ActiveState
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1801445289
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1801445288}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1352136814}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1801445290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1801445288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd8d001fc6450c94b9c26879e5c7ad56, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerStateMachineRef: {fileID: 0}
+  BrkableStateMachineRef: {fileID: 1352136815}
 --- !u!1001 &1840435623
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10670,14 +10844,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3053090022407971251, guid: f21f01fa00370a049aa2f442f6e72947, type: 3}
-      propertyPath: geyserSO
-      value: 
-      objectReference: {fileID: 11400000, guid: c0f651db47c699343a4ac3bd2fe87d0f, type: 2}
-    - target: {fileID: 3053090022407971251, guid: f21f01fa00370a049aa2f442f6e72947, type: 3}
-      propertyPath: playerDetectionOffset.y
-      value: 4
-      objectReference: {fileID: 0}
     - target: {fileID: 7243929158342762064, guid: f21f01fa00370a049aa2f442f6e72947, type: 3}
       propertyPath: m_Name
       value: GeyserV2 Permanent
@@ -10714,7 +10880,7 @@ Transform:
   m_GameObject: {fileID: 2142258849}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.05, y: 0.16, z: 0}
   m_LocalScale: {x: 2.92, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

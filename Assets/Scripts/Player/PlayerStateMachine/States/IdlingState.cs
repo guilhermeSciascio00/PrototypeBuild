@@ -20,6 +20,11 @@ public class IdlingState : StateCore
         {
             BaseStateMachine.SwitchState(PlayerStateMachineRef.JumpingState);
         }
+
+        if (PlayerStateMachineRef.GetPlayerRB2D().linearVelocityY < 0f)
+        {
+            BaseStateMachine.SwitchState(PlayerStateMachineRef.FallingState);
+        }
     }
 
     public override void PhysicsUpdateState()

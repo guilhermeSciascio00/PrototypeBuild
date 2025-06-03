@@ -19,14 +19,14 @@ PrefabInstance:
     - target: {fileID: 5811847219427869441, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
       propertyPath: geyserSO
       value: 
-      objectReference: {fileID: 11400000, guid: 4f5afa197d9ca22459f97432700707fb, type: 2}
+      objectReference: {fileID: 11400000, guid: c0f651db47c699343a4ac3bd2fe87d0f, type: 2}
     - target: {fileID: 5811847219427869441, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
       propertyPath: geyserCollision
       value: 
       objectReference: {fileID: 5896532880304986277}
     - target: {fileID: 5811847219427869441, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
       propertyPath: playerDetectionOffset.y
-      value: 4
+      value: 3.54
       objectReference: {fileID: 0}
     - target: {fileID: 7076824921691211294, guid: 7bf97e4de94c63445ba4558760a56990, type: 3}
       propertyPath: m_LocalPosition.x

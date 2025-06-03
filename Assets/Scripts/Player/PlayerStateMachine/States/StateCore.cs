@@ -4,6 +4,7 @@ public abstract class StateCore : MonoBehaviour
 {
     public BaseStateMachine BaseStateMachine {  get; set; }
     [SerializeField] protected PlayerStateMachine PlayerStateMachineRef;
+    [SerializeField] protected BreakableStateMachine BrkableStateMachineRef;
 
     //Actions to be done as soon as the machine enter this state
     public abstract void EnterState();
