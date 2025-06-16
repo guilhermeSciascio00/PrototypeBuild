@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerStateMachine : BaseStateMachine
+public class PlayerStateMachine : BaseStateMachine, ISavable
 {
 
     [Header("PlayerStateMachineAttributes")]
@@ -124,6 +124,20 @@ public class PlayerStateMachine : BaseStateMachine
     {
         return new Vector2(groundDetectionSize.x, groundDetectionSize.y);
     }
+
+    //SAVING ZONE, IF ANYTHING BAD HAPPENS, IT'S PROBABLY HERE
+
+    public void OnLoad(GameData gameData)
+    {
+        RootObjectTransform.transform.position = gameData.playerPos;
+    }
+
+    public void OnSave(GameData gameData)
+    {
+        gameData.playerPos = RootObjectTransform.transform.position;
+        gameData.savedTime = System.DateTime.Now;
+    }
+
 
     protected override void OnDrawGizmos()
     {

@@ -25,10 +25,10 @@ public class MovingState : StateCore
         }
 
         //Wall Slide
-        if (PlayerStateMachineRef.GetPlayerRB2D().linearVelocityY < 0f)
-        {
-            BaseStateMachine.SwitchState(PlayerStateMachineRef.FallingState);
-        }
+        //if (PlayerStateMachineRef.GetPlayerRB2D().linearVelocityY < 0f)
+        //{
+        //    BaseStateMachine.SwitchState(PlayerStateMachineRef.FallingState);
+        //}
     }
 
     public override void PhysicsUpdateState()
