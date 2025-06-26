@@ -5,6 +5,7 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
 
     [Header("PlayerStateMachineAttributes")]
     [SerializeField] protected Rigidbody2D playerRefRB2D;
+    [SerializeField] private InputManager _gameInputManager;
 
     [Header("PlayerGroundChecker")]
     [SerializeField] Vector2 groundPosition;
@@ -19,26 +20,14 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
     [Header("Player Stats")]
     [SerializeField] private float _playerSpeed;
     [SerializeField] private float _playerJumpForce;
+    private float _baseGravity;
     private Vector2 _playerDirection;
     private bool _hasJumped = false;
     public bool IsOnGround { get; private set; }
 
-    InputSystem_Actions _playerInputSystem;
-
-    private void Awake()
-    {
-        _playerInputSystem = new InputSystem_Actions();
-    }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
-        _playerInputSystem.Player.Move.Enable();
-        _playerInputSystem.Player.Jump.Enable();
-
-        _playerInputSystem.Player.Move.performed += Move_performed;
-        _playerInputSystem.Player.Jump.performed += Jump_performed;
+        _baseGravity = playerRefRB2D.gravityScale;
 
         GetStatesComponents();
         _currentState = IdlingState;
@@ -47,24 +36,12 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
         _currentState.EnterState();
     }
 
-    private void Jump_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        if(IsOnGround){
-            _hasJumped = true;
-        }
-    }
-
-    private void Move_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-    {
-        _playerDirection = obj.ReadValue<Vector2>();
-    }
-
-    // Update is called once per frame
     void Update()
     {
         _currentState.UpdateState();
         AddStateTime();
         IsOnJumpAbleSurface();
+        PlayerJump();
     }
 
     private void FixedUpdate()
@@ -77,7 +54,15 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
 
     private void MoveThePlayer()
     {
-        playerRefRB2D.linearVelocityX = _playerDirection.x * _playerSpeed;
+        playerRefRB2D.linearVelocityX = _gameInputManager.Axis.x * _playerSpeed;
+    }
+
+    private void PlayerJump()
+    {
+        if (IsOnGround && _gameInputManager.IsJumping)
+        {
+            _hasJumped = true;
+        }
     }
 
     private bool IsOnJumpAbleSurface()
@@ -106,6 +91,10 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
     public float GetPlayerSpeed() => _playerSpeed;
 
     public float GetPlayerJumpForce() => _playerJumpForce;
+
+    public void ResetPlayerGravity() => playerRefRB2D.gravityScale = _baseGravity;
+
+    public InputManager GetGameInputRef() => _gameInputManager;
 
     private void GetStatesComponents()
     {

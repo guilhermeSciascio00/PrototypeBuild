@@ -11,10 +11,20 @@ public class JumpingState : StateCore
 
     public override void UpdateState()
     {
+
+        if (PlayerStateMachineRef.GetGameInputRef().IsJumping) return;
+
+        else if (PlayerStateMachineRef.GetGameInputRef().WasJumpReleased)
+        {
+            PlayerStateMachineRef.GetPlayerRB2D().gravityScale *= 2.5f;
+        }
+
         if (!PlayerStateMachineRef.HasPlayerJumped() && PlayerStateMachineRef.GetPlayerRB2D().linearVelocityY < 0f)
         {
             BaseStateMachine.SwitchState(PlayerStateMachineRef.FallingState);
         }
+
+
     }
 
     public override void PhysicsUpdateState()
@@ -22,6 +32,7 @@ public class JumpingState : StateCore
         if (PlayerStateMachineRef.HasPlayerJumped())
         {
             PlayerStateMachineRef.GetPlayerRB2D().AddForceY(PlayerStateMachineRef.GetPlayerJumpForce(), ForceMode2D.Impulse);
+
             PlayerStateMachineRef.StopPlayerJump();
         }
     }

@@ -25,5 +25,6 @@ public class FallingState : StateCore
     public override void ExitState() 
     {
         PlayerStateMachineRef.GetPlayerRB2D().linearVelocity = Vector2.zero;
+        PlayerStateMachineRef.ResetPlayerGravity();
     }
 }
