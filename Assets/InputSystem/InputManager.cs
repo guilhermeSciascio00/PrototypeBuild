@@ -48,7 +48,7 @@ public class InputManager : MonoBehaviour
     void Update()
     {
         Axis = _moveAction.ReadValue<Vector2>();
-        IsJumping = _jumpAction.IsPressed();
+        IsJumping = _jumpAction.WasPerformedThisFrame();
         WasJumpReleased = _jumpAction.WasReleasedThisFrame();
     }
 }

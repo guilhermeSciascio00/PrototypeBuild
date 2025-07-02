@@ -40,7 +40,7 @@ public class BaseStateMachine : MonoBehaviour
 
         GUIStyle style = new GUIStyle();
         style.fontStyle = FontStyle.Bold;
-        style.fontSize = 8;
+        style.fontSize = 12;
         style.alignment = TextAnchor.MiddleCenter;
         style.normal.textColor = Color.green;
 

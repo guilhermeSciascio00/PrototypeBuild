@@ -1,11 +1,18 @@
 using UnityEngine;
+using UnityEditor;
 
 public class PlayerStateMachine : BaseStateMachine, ISavable
 {
 
     [Header("PlayerStateMachineAttributes")]
     [SerializeField] protected Rigidbody2D playerRefRB2D;
+    [SerializeField] private VelocityChecker _velocityCheckerRef;
     [SerializeField] private InputManager _gameInputManager;
+
+    [Header("PlayerVisuals")]
+    [SerializeField] private ParticleSystem _jumpParticles;
+    [SerializeField] private ParticleSystem _landParticles;
+    [SerializeField] private ParticleSystem _heavyLandParticles;
 
     [Header("PlayerGroundChecker")]
     [SerializeField] Vector2 groundPosition;
@@ -18,16 +25,30 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
     public FallingState FallingState;
 
     [Header("Player Stats")]
-    [SerializeField] private float _playerSpeed;
+    [SerializeField] private float _playerMovementSpeed;
     [SerializeField] private float _playerJumpForce;
+    [SerializeField] private float _simulateGravityForce = 2f;
+    [SerializeField] private float _playerBaseYScale = .7f;
+    [SerializeField] private float _playerTargetYScale = 1f;
+    private Vector2 _playerDefaultScale = Vector2.zero;
     private float _baseGravity;
-    private Vector2 _playerDirection;
     private bool _hasJumped = false;
     public bool IsOnGround { get; private set; }
+
+    [Header("Debug settings(PlayerStateMachine)")]
+    [SerializeField] private Vector3 _velocityTextOffset;
+
+
+    //Player stats variables
+    
 
     void Start()
     {
         _baseGravity = playerRefRB2D.gravityScale;
+
+        playerRefRB2D.gameObject.transform.localScale = new Vector2(playerRefRB2D.gameObject.transform.localScale.x, _playerBaseYScale);
+
+        _playerDefaultScale = playerRefRB2D.gameObject.transform.localScale;
 
         GetStatesComponents();
         _currentState = IdlingState;
@@ -50,11 +71,21 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
 
         //PlayerMovement 
         MoveThePlayer();
+        GravitySimulation();
     }
+
+    #region GravityTweak
+
+    private void GravitySimulation()
+    {
+        playerRefRB2D.linearVelocityY -= _simulateGravityForce;
+    }
+
+    #endregion
 
     private void MoveThePlayer()
     {
-        playerRefRB2D.linearVelocityX = _gameInputManager.Axis.x * _playerSpeed;
+        playerRefRB2D.linearVelocityX = _gameInputManager.Axis.x * _playerMovementSpeed;
     }
 
     private void PlayerJump()
@@ -78,24 +109,37 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
         return false;
     }
 
+    #region GetMethods
+
+    //Jumps
     public bool HasPlayerJumped() => _hasJumped;
     public void StopPlayerJump()
     {
         _hasJumped = false;
     }
 
-    public Vector2 GetPlayerDirection() => _playerDirection;
+    //Velocity and Gravity
+    public VelocityChecker GetPlayerVelocityChecker() => _velocityCheckerRef;
+
+    public Vector2 GetPlayerDirection() => _gameInputManager.Axis;
 
     public Rigidbody2D GetPlayerRB2D() => playerRefRB2D;
 
-    public float GetPlayerSpeed() => _playerSpeed;
+    public float GetPlayerSpeed() => _playerMovementSpeed;
 
     public float GetPlayerJumpForce() => _playerJumpForce;
 
-    public void ResetPlayerGravity() => playerRefRB2D.gravityScale = _baseGravity;
+    public float GetPlayerInitialGravity() => _baseGravity;
 
+    //Input Ref
     public InputManager GetGameInputRef() => _gameInputManager;
 
+    //Scale
+    public float GetPlayerBaseYScale() => _playerBaseYScale;
+
+    public float GetPlayerTargetYScale() => _playerTargetYScale;
+
+    //States
     private void GetStatesComponents()
     {
         MovingState = GetComponentInChildren<MovingState>();
@@ -104,6 +148,7 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
         FallingState = GetComponentInChildren<FallingState>();
     }
 
+    //Ground detectors
     private Vector2 GetGroundDetectorPos()
     {
         return new Vector2(RootObjectTransform.position.x + groundPosition.x, RootObjectTransform.position.y + groundPosition.y);
@@ -113,6 +158,15 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
     {
         return new Vector2(groundDetectionSize.x, groundDetectionSize.y);
     }
+
+    //ParticlesSyS
+    public ParticleSystem GetJumpParticlesSys() => _jumpParticles;
+    public ParticleSystem GetLandParticlesSys() => _landParticles;
+    public ParticleSystem GetHeavyLandParticlesSys() => _heavyLandParticles;
+
+    #endregion
+    public void ResetPlayerGravity() => playerRefRB2D.gravityScale = _baseGravity;
+    public void ResetPlayerScale() => playerRefRB2D.gameObject.transform.localScale = _playerDefaultScale;
 
     //SAVING ZONE, IF ANYTHING BAD HAPPENS, IT'S PROBABLY HERE
 
@@ -130,7 +184,16 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
 
     protected override void OnDrawGizmos()
     {
+        if(!Application.isPlaying) { return; }
         base.OnDrawGizmos();
+
+        GUIStyle style = new GUIStyle();
+        style.fontStyle = FontStyle.Bold;
+        style.fontSize = 16;
+        style.alignment = TextAnchor.MiddleCenter;
+        style.normal.textColor = Color.red;
+
+        Handles.Label(transform.position + _velocityTextOffset, $"Velocity X: {playerRefRB2D.linearVelocityX:F2}, Y: {playerRefRB2D.linearVelocityY:F2}", style);
 
         Gizmos.color = Color.blue;
         Gizmos.DrawWireCube(GetGroundDetectorPos(), GetGroundSizeDetection());
