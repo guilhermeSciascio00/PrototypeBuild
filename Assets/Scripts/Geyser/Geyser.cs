@@ -216,6 +216,8 @@ public class Geyser : MonoBehaviour
     {
         Rigidbody2D rb2D = _playerRef?.GetComponent<Rigidbody2D>();
 
+        if (_lerpTimer <= MIN_TIMER_VALUE) { return; }
+
         if (!_wasVelocityCancelled && _isPlayerIn)
         {
             rb2D.linearVelocityY = MAX_LERP_VALUE;

@@ -16,9 +16,14 @@ public class IdlingState : StateCore
             BaseStateMachine.SwitchState(PlayerStateMachineRef.MovingState);
         }
 
-        if (PlayerStateMachineRef.HasPlayerJumped())
+        else if (PlayerStateMachineRef.HasPlayerJumped())
         {
             BaseStateMachine.SwitchState(PlayerStateMachineRef.JumpingState);
+        }
+
+        else if (PlayerStateMachineRef.GetPlayerRB2D().linearVelocityY < 0f)
+        {
+            BaseStateMachine.SwitchState(PlayerStateMachineRef.FallingState);
         }
     }
 

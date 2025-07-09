@@ -15,19 +15,25 @@ public class MovingState : StateCore
     {
         if(PlayerStateMachineRef.GetPlayerDirection().x == 0)
         {
-            BaseStateMachine.SwitchState(PlayerStateMachineRef.IdlingState);
             PlayerStateMachineRef.GetPlayerRB2D().linearVelocity = new Vector2(0f, PlayerStateMachineRef.GetPlayerRB2D().linearVelocityY);
+            PlayerStateMachineRef.SwitchState(PlayerStateMachineRef.IdlingState);
         }
 
         if (PlayerStateMachineRef.HasPlayerJumped())
         {
-            BaseStateMachine.SwitchState(PlayerStateMachineRef.JumpingState);
+            PlayerStateMachineRef.SwitchState(PlayerStateMachineRef.JumpingState);
         }
+
+        //Wall Slide
+        //if (PlayerStateMachineRef.GetPlayerRB2D().linearVelocityY < 0f)
+        //{
+        //    BaseStateMachine.SwitchState(PlayerStateMachineRef.FallingState);
+        //}
     }
 
     public override void PhysicsUpdateState()
     {
-        //PlayerStateMachineRef.GetPlayerRB2D().linearVelocityX = PlayerStateMachineRef.GetPlayerDirection().x * PlayerStateMachineRef.GetPlayerSpeed();
+
     }
 
     public override void ExitState()
