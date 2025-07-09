@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
+using System.Linq;
+
 
 public class PlayerStateMachine : BaseStateMachine, ISavable
 {
@@ -13,6 +16,11 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
     [SerializeField] private ParticleSystem _jumpParticles;
     [SerializeField] private ParticleSystem _landParticles;
     [SerializeField] private ParticleSystem _heavyLandParticles;
+    [SerializeField] private LineRenderer _playerLineRenderer;
+    [Header("LineRendererAdjusts")]
+    [SerializeField] private float _distanceTreshold = 0.10f;
+    [SerializeField] private float _fadeOutTimer = .4f;
+    [SerializeField] private float _fadeTimerCountdown;
 
     [Header("PlayerGroundChecker")]
     [SerializeField] Vector2 groundPosition;
@@ -37,18 +45,22 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
 
     [Header("Debug settings(PlayerStateMachine)")]
     [SerializeField] private Vector3 _velocityTextOffset;
-
-
-    //Player stats variables
+    [SerializeField] private List<Vector3> _recentPlayerPosition = new List<Vector3>();
     
 
     void Start()
     {
+        
+        _recentPlayerPosition.Add(RootObjectTransform.position);
+        _playerLineRenderer.SetPosition(0, RootObjectTransform.position);
+
+        _fadeTimerCountdown = _fadeOutTimer;
+
         _baseGravity = playerRefRB2D.gravityScale;
 
-        playerRefRB2D.gameObject.transform.localScale = new Vector2(playerRefRB2D.gameObject.transform.localScale.x, _playerBaseYScale);
+        RootObjectTransform.localScale = new Vector2(RootObjectTransform.localScale.x, _playerBaseYScale);
 
-        _playerDefaultScale = playerRefRB2D.gameObject.transform.localScale;
+        _playerDefaultScale = RootObjectTransform.localScale;
 
         GetStatesComponents();
         _currentState = IdlingState;
@@ -63,6 +75,8 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
         AddStateTime();
         IsOnJumpAbleSurface();
         PlayerJump();
+
+        PositionPointsManager();
     }
 
     private void FixedUpdate()
@@ -107,6 +121,43 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
         }
         IsOnGround = false;
         return false;
+    }
+
+    private void PositionPointsManager()
+    {
+        
+        Vector3 _lastPosition = _recentPlayerPosition.Last();
+
+        if(Vector3.Distance(RootObjectTransform.position, _lastPosition) >= _distanceTreshold)
+        {
+            if(_recentPlayerPosition.Count < 5)
+            {
+                _recentPlayerPosition.Add(RootObjectTransform.position);
+            }
+        }
+
+        _playerLineRenderer.positionCount = _recentPlayerPosition.Count;
+        _playerLineRenderer.SetPositions(_recentPlayerPosition.ToArray());
+
+        if (IsFadeOutTimerOut() && _recentPlayerPosition.Count > 1)
+        {
+            _recentPlayerPosition.RemoveAt(0);
+            _fadeTimerCountdown = _fadeOutTimer;
+        }
+    }
+
+    private bool IsFadeOutTimerOut()
+    {
+        _fadeTimerCountdown -= Time.deltaTime;
+        if(_fadeTimerCountdown < 0f)
+        {
+            _fadeTimerCountdown = 0f;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     #region GetMethods
@@ -166,7 +217,7 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
 
     #endregion
     public void ResetPlayerGravity() => playerRefRB2D.gravityScale = _baseGravity;
-    public void ResetPlayerScale() => playerRefRB2D.gameObject.transform.localScale = _playerDefaultScale;
+    public void ResetPlayerScale() => RootObjectTransform.localScale = _playerDefaultScale;
 
     //SAVING ZONE, IF ANYTHING BAD HAPPENS, IT'S PROBABLY HERE
 

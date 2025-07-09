@@ -15,7 +15,7 @@ public class SaveManager : MonoBehaviour
     GameData _gameDataRef;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         fileManager = new FileManager(Application.persistentDataPath, fileName);
 
