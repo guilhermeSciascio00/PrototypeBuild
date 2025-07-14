@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class Shoot : MonoBehaviour
 {
-    InputSystem_Actions inputSystem;
+    [SerializeField] InputManager _inputSystem;
 
     [SerializeField] private List<Bullet> bullets;
     [SerializeField] private Queue<Bullet> spawnedBullets = new Queue<Bullet>();
@@ -12,20 +12,12 @@ public class Shoot : MonoBehaviour
 
     private void Awake()
     {
-        inputSystem = new InputSystem_Actions();
-        inputSystem.Player.Attack.Enable();
         CreateBullets();
     }
 
-    private void Start()
-    {
-        inputSystem.Player.Attack.performed += Attack_performed;
-    }
-
-    private void Attack_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+    private void Update()
     {
         ShootBullet();
-        Debug.Log(spawnedBullets.Count);
     }
 
     private void CreateBullets()
@@ -46,14 +38,17 @@ public class Shoot : MonoBehaviour
 
     private void ShootBullet()
     {
-        if(spawnedBullets.Count == 0) 
+        if (_inputSystem.WasAttackButtonPressed)
         {
-            Debug.LogWarning("There aren't any more bullets to shoot");
-            return;
-        }
+            if (spawnedBullets.Count == 0)
+            {
+                Debug.LogWarning("There aren't any more bullets to shoot");
+                return;
+            }
 
-        Bullet currentBullet = spawnedBullets.Dequeue();
-        currentBullet.gameObject.SetActive(true);
+            Bullet currentBullet = spawnedBullets.Dequeue();
+            currentBullet.gameObject.SetActive(true);
+        }
     }
 
     public void AddBulletToTheMagazine(Bullet bulletToAdd)

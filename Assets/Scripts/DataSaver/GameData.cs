@@ -9,6 +9,7 @@ public class GameData
     public List<GameObject> collectedCoins = new List<GameObject>();//feito
     public Vector3 playerPos;//feito
     public DateTime savedTime;//feito
+    public string inputActionMap;//feito
 
     public GameData()
     {
