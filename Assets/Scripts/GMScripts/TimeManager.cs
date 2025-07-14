@@ -21,12 +21,10 @@ public class TimeManager : MonoBehaviour
     {
         if (_inputManager.IsGamePaused)
         {
-            Debug.LogWarning("Game is paused!! Stay where you are!");
             Time.timeScale = 0f;
         }
         else
         {
-            Debug.LogWarning("Game is unpaused!! Move!! move!!");
             Time.timeScale = 1f;
         }
     }

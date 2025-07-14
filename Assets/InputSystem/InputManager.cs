@@ -35,15 +35,10 @@ public class InputManager : MonoBehaviour, ISavable
 
     public bool WasAttackButtonPressed { get; private set; }
 
-    private void Awake()
-    {
-        _actionMap = _jumpActionReference.action.actionMap;
-        IsGamePaused = false;
-    }
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        IsGamePaused = false;
         _moveAction = _movementActionReference.action;
         _jumpAction = _jumpActionReference.action;
         _pauseAction = _pauseActionReference.action;
@@ -53,6 +48,7 @@ public class InputManager : MonoBehaviour, ISavable
     private void OnEnable()
     {
         //_playerInput.Player.Enable();
+        _actionMap = _jumpActionReference.action.actionMap;
         _actionMap.Enable();
     }
 
