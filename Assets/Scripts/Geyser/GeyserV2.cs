@@ -7,7 +7,7 @@ public class GeyserV2 : MonoBehaviour
 
     //Getting the player Rigidbody;
     private Rigidbody2D _rb2d;
-    private bool _isRb2DNull = false;
+    //private bool _isRb2DNull = false;
 
     //GeyserBoxCastSize
     [SerializeField] float boxLenghtPlayer = 1f;
@@ -153,13 +153,13 @@ public class GeyserV2 : MonoBehaviour
         {
             _isPlayerIn = true;
             _rb2d = playerReference;
-            _isRb2DNull = false;
+            //_isRb2DNull = false;
         }
         else
         {
             _isPlayerIn = false;
             _rb2d = null;
-            _isRb2DNull = true;
+            //_isRb2DNull = true;
             _wasVelocityCancelled = false;
         }
     }
