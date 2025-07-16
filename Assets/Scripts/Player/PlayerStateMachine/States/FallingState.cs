@@ -13,9 +13,8 @@ public class FallingState : StateCore
 
     public override void EnterState()
     {
-
+        PlayerStateMachineRef.UpdateParticlesColor();
         _playerRB2D = PlayerStateMachineRef.GetPlayerRB2D();
-
     }
 
 

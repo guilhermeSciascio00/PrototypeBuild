@@ -36,7 +36,6 @@ public class ColorDetector : MonoBehaviour
     private IEnumerator ChangeColors()
     {
         _currentTimer = 0f;
-        Debug.Log("Lemão let me chéqui");
 
         while (_currentTimer <= _timerMaxAmount)
         {

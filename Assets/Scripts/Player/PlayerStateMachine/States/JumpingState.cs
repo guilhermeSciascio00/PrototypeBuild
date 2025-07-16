@@ -8,6 +8,7 @@ public class JumpingState : StateCore
     public override void EnterState()
     {
         _lastPosition = BaseStateMachine.RootObjectTransform.position;
+        PlayerStateMachineRef.UpdateParticlesColor();
         PlayerStateMachineRef.GetJumpParticlesSys().Play();
     }
 

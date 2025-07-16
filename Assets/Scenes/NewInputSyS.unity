@@ -657,6 +657,17 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &412727688 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5031488451781968668, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
+  m_PrefabInstance: {fileID: 1286527247}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf8277ad0f961204bba2f3afe7ef7bdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &594825019
 GameObject:
   m_ObjectHideFlags: 0
@@ -6506,6 +6517,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1161605310}
     - target: {fileID: 5031488451781968668, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
+      propertyPath: _specialAttack
+      value: 
+      objectReference: {fileID: 1286527259}
+    - target: {fileID: 5031488451781968668, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
       propertyPath: _distanceTreshold
       value: 0.01
       objectReference: {fileID: 0}
@@ -6553,6 +6568,22 @@ PrefabInstance:
       propertyPath: groundDetectionSize.x
       value: 0.6
       objectReference: {fileID: 0}
+    - target: {fileID: 5031488451781968668, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
+      propertyPath: _playerParticles.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5031488451781968668, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
+      propertyPath: '_playerParticles.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1161605310}
+    - target: {fileID: 5031488451781968668, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
+      propertyPath: '_playerParticles.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1379840446}
+    - target: {fileID: 5031488451781968668, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
+      propertyPath: '_playerParticles.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1816620169}
     - target: {fileID: 8042690313871168944, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
       propertyPath: m_Name
       value: BaseCharacter
@@ -6628,6 +6659,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8042690313871168944, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1286527255}
+    - targetCorrespondingSourceObject: {fileID: 8042690313871168944, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1286527259}
   m_SourcePrefab: {fileID: 100100000, guid: 9f8e172799a8fa9418e42ff48ffa98fc, type: 3}
 --- !u!1 &1286527248 stripped
 GameObject:
@@ -6686,6 +6720,21 @@ MonoBehaviour:
   _targetColor: {r: 0, g: 0, b: 0, a: 0}
   _timerMaxAmount: 1.5
   _currentTimer: 0
+--- !u!114 &1286527259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286527248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 070ec3c1256090547aaf50e5e7553857, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _upForce: 600
+  _downForce: 1500
+  _playerStateMachine: {fileID: 412727688}
 --- !u!1 &1288736456
 GameObject:
   m_ObjectHideFlags: 0
@@ -11862,6 +11911,9 @@ MonoBehaviour:
   _movementActionReference: {fileID: -8715265012094165583, guid: 51e34cf13fda0c24ba2ac73f4001d8ed, type: 3}
   _attackActionReference: {fileID: 1206270273912620839, guid: 51e34cf13fda0c24ba2ac73f4001d8ed, type: 3}
   _pauseActionReference: {fileID: -2233072204240645, guid: 51e34cf13fda0c24ba2ac73f4001d8ed, type: 3}
+  _specialAttackReference: {fileID: -1706747828272547120, guid: 51e34cf13fda0c24ba2ac73f4001d8ed, type: 3}
+  _playerStateMachine: {fileID: 412727688}
+  _playerSpecialAttack: {fileID: 1286527259}
 --- !u!114 &1790364908
 MonoBehaviour:
   m_ObjectHideFlags: 0

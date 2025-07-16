@@ -11,11 +11,13 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
     [SerializeField] protected Rigidbody2D playerRefRB2D;
     [SerializeField] private VelocityChecker _velocityCheckerRef;
     [SerializeField] private InputManager _gameInputManager;
+    [SerializeField] private HulkSmashPower _specialAttack;
 
     [Header("PlayerVisuals")]
     [SerializeField] private ParticleSystem _jumpParticles;
     [SerializeField] private ParticleSystem _landParticles;
     [SerializeField] private ParticleSystem _heavyLandParticles;
+    [SerializeField] private List<ParticleSystem> _playerParticles;
     [SerializeField] private LineRenderer _playerLineRenderer;
     [Header("LineRendererAdjusts")]
     [SerializeField] private float _distanceTreshold = 0.10f;
@@ -27,10 +29,10 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
     [SerializeField] Vector2 groundDetectionSize;
 
     [Header("Player States")]
-    public MovingState MovingState;
-    public JumpingState JumpingState;
-    public IdlingState IdlingState;
-    public FallingState FallingState;
+    public MovingState MovingState { get; private set; }
+    public JumpingState JumpingState { get; private set; }
+    public IdlingState IdlingState { get; private set; }
+    public FallingState FallingState { get; private set; }
 
     [Header("Player Stats")]
     [SerializeField] private float _playerMovementSpeed;
@@ -81,6 +83,8 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
 
     private void FixedUpdate()
     {
+        if (_specialAttack.IsSpecialAttackBeingPlayed()) return;
+
         _currentState.PhysicsUpdateState();
 
         //PlayerMovement 
@@ -199,6 +203,8 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
         FallingState = GetComponentInChildren<FallingState>();
     }
 
+    public StateCore GetCurrentState() => _currentState;
+
     //Ground detectors
     private Vector2 GetGroundDetectorPos()
     {
@@ -218,6 +224,21 @@ public class PlayerStateMachine : BaseStateMachine, ISavable
     #endregion
     public void ResetPlayerGravity() => playerRefRB2D.gravityScale = _baseGravity;
     public void ResetPlayerScale() => RootObjectTransform.localScale = _playerDefaultScale;
+
+    public void UpdateParticlesColor()
+    {
+        Color playerColor = _velocityCheckerRef.gameObject.GetComponent<SpriteRenderer>().color;
+
+        
+        for(int i = 0; i < _playerParticles.Count ; i++)
+        {
+            ParticleSystem ps = _playerParticles[i];
+            ParticleSystem.MainModule psMain = ps.main;
+            psMain.startColor = playerColor;
+
+            //_playerParticles[i].startColor = playerColor;
+        }
+    }
 
     //SAVING ZONE, IF ANYTHING BAD HAPPENS, IT'S PROBABLY HERE
 

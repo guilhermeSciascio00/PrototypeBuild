@@ -5,8 +5,8 @@ public class BaseStateMachine : MonoBehaviour
 {
     [Header("State Machine Attributes")]
     private float _timeOnCurrentState = 0f;
-    public StateCore _currentState;
-    public StateCore _lastState;
+    protected StateCore _currentState;
+    protected StateCore _lastState;
     public Transform RootObjectTransform;
     public Animator RootObjectAnimator;
 
