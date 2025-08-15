@@ -1,1 +1,1 @@
-This Repo, has the intention, of storing and documeting all the scripts and prototypes that could be deployed to the mainstream game 
+This Repo, has the intention, of storing and documeting all the scripts and prototypes I learned in my internship
